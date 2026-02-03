@@ -1,6 +1,6 @@
 ---
 title: "Dont Tell Comedy"
-show_date: 2026-01-10
+show_date: 2026-02-14
 redirect: https://www.donttellcomedy.com/shows/bozeman-17643/
 meta:
   city: Bozeman
