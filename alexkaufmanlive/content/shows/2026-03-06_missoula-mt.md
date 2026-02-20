@@ -1,12 +1,12 @@
 ---
 title: "Dont Tell Comedy"
 show_date: 2026-03-06
-redirect:
+redirect: https://www.donttellcomedy.com/shows/missoula-18175/
 meta:
   city: Missoula
   state: MT
   show_time: 8:00pm
-  event_link: https://www.donttellcomedy.com/cities/missoula/
+  event_link: https://www.donttellcomedy.com/shows/missoula-18175/
 ---
 
 {{ event_button(meta.event_link) }}
