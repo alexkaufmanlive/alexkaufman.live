@@ -2,7 +2,7 @@
 title: Serena Thiel and Friends
 show_date: 2025-05-27
 meta:
-  city: Bismark
+  city: Bismarck
   state: ND
 ---
 

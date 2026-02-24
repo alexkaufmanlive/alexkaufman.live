@@ -16,7 +16,7 @@
 
 Alex Kaufman is a former physicist who swapped science for stand-up while waiting for the heat death of the universe. Alex started performing stand-up in Tacoma, Washington and has been based out of Bozeman, Montana. His comedy draws on his experiences in physics, growing up as a military kid, and his laser-focused eye for the absurd.
 
-Alex has featured for Kyle Kinane, Sean Patton, and more, and performed at festivals including the North Carolina Comedy Festival, Finger Lakes Comedy Festival, and The Loons on the Lake Comedy Festival. You can catch him performing throughout Montata, and at clubs, festivals, and shows around the country.
+Alex has featured for Kyle Kinane, Sean Patton, and more, and performed at festivals including the North Carolina Comedy Festival, Finger Lakes Comedy Festival, and The Loons on the Lake Comedy Festival. You can catch him performing throughout Montana, and at clubs, festivals, and shows around the country.
 
 During undergrad he founded the now iconic Bob's Comedy Jive and during grad school started the production company Bone Dry Comedy. An accomplished producer, Alex brought dozens of headliners to perform in cities all over Montana including Amy Miller, Billy Wayne Davis, and Kate Willett.
 

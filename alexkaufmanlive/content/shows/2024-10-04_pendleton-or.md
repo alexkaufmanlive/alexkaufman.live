@@ -2,7 +2,7 @@
 title: Flying X
 show_date: 2024-10-04
 meta:
-  city: Pendelton
+  city: Pendleton
   state: OR
 ---
 
