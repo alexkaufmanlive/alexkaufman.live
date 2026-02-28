@@ -8,8 +8,4 @@ meta:
   event_link: https://ashevillecomedyfestival.com/
 ---
 
-{{ event_button(meta.event_link) }}
-
-{{ meta.city }}, {{ meta.state }}
-
 [![Asheville Comedy Festival]({{ url_for('static', filename=image) }})]({{ meta.event_link }})
