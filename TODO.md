@@ -7,12 +7,13 @@ site that converts bookers. Organized roughly by impact/effort ratio.
 
 ## Tier 1 — Huge wins, small effort
 
-### 1. Image pipeline
+### 1. Image pipeline ✅
 
 Current: hero image is 6.8MB, another is 3MB, no `width`/`height`, no
 WebP/AVIF. This is the #1 speed issue on the site.
 
 Plan:
+
 - Write a script (Pillow or `sharp`) to resize + convert everything in
   `content/static/` to AVIF + WebP + JPEG fallback at multiple widths.
 - Target sizes: hero <200KB, gallery thumbs <100KB.
@@ -26,6 +27,7 @@ Plan:
 Free tier. Sits between PythonAnywhere and users.
 
 Plan:
+
 - Move DNS to Cloudflare.
 - Enable proxy (orange cloud) on A/AAAA records.
 - Set SSL mode to Full (strict) — PA already has HTTPS.
@@ -36,12 +38,13 @@ Plan:
 - Purge cache on deploy (can be a curl in `update-site.sh`).
 - Enable Web Analytics (free, cookieless).
 
-### 3. Fix canonical URL
+### 3. Fix canonical URL ✅
 
 `base.jinja2:13` hardcodes the homepage as canonical for every page.
 Currently tells Google every show page is a duplicate of home.
 
 Plan:
+
 - Replace with `<link rel="canonical" href="{{ request.url }}">` or
   build it from `request.path`.
 - Verify for home, contact, shows index, individual shows.
@@ -52,6 +55,7 @@ Plan:
 party JS) to show 3 brand icons in the footer.
 
 Plan:
+
 - Grab SVG source for facebook, instagram, youtube brand icons from
   Simple Icons or FontAwesome Free.
 - Inline them in `base.jinja2` footer.
@@ -63,6 +67,7 @@ Plan:
 When site is shared in Slack/iMessage/Discord, preview is blank.
 
 Plan:
+
 - Add OG tags to `base.jinja2`:
   - `og:title`, `og:description`, `og:image` (1200×630),
     `og:type`, `og:url`
@@ -81,6 +86,7 @@ Every page currently titled `alexkaufman.live`. Every description is
 the generic tagline. Wasted SEO surface.
 
 Plan:
+
 - Use frontmatter `title` and `meta.description` for show page tags.
 - Build good defaults for home ("Alex Kaufman — standup comedian
   based in Bozeman, Montana"), contact, shows list.
@@ -90,13 +96,14 @@ Plan:
 ### 7. Cache-Control headers for static assets
 
 Plan:
+
 - Configure PythonAnywhere static mapping (or rely on Cloudflare) to
   set `Cache-Control: public, max-age=31536000, immutable` on files
   in `/static/`.
 - Version the CSS filename (`style.v2.css`) to cache-bust on change.
 - If Cloudflare is in place (#2), this is handled at the edge.
 
-### 8. JSON-LD Person schema ✓
+### 8. JSON-LD Person schema ✅
 
 Done. JSON-LD is now built in Python (`services/jsonld.py`) and
 rendered through the base template via a `jsonld` context variable.
@@ -111,6 +118,7 @@ on Person.
 `.woff2` is 104KB and referenced from CSS (no preload, no swap).
 
 Plan:
+
 - Add `<link rel="preload" as="font" type="font/woff2" crossorigin>`
   in `base.jinja2`.
 - Ensure `@font-face` in `style.css` has `font-display: swap`.
@@ -121,6 +129,7 @@ Eventbrite and TicketTailor scripts on show pages cost ~100-300ms
 handshake on first click.
 
 Plan:
+
 - Conditionally add `<link rel="preconnect">` in show.jinja2 or
   base.jinja2 for `eventbrite.com` and `tickettailor.com` when
   relevant.
@@ -134,6 +143,7 @@ Plan:
 Currently only CTA is "join email list." Goal is bookings.
 
 Plan:
+
 - Add a "Book Alex" button/section, prominent on home page.
 - Clarify what's offered: runtime options (5min/15min/45min),
   styles (club, festival, corporate), availability.
@@ -145,6 +155,7 @@ Plan:
 One-stop page/section with everything a booker needs.
 
 Plan:
+
 - New route/page `/epk/` or prominent home section.
 - Include: elevator pitch, set videos (5min, headliner, crowd work),
   2-3 high-res press photos with download links, bio in 3 lengths,
@@ -156,6 +167,7 @@ Plan:
 80 shows worth of venue data; currently hidden in individual pages.
 
 Plan:
+
 - Aggregate unique venues from show frontmatter at startup (extend
   `content.py`).
 - Surface a "Performed at" section on home page with notable venues
@@ -168,6 +180,7 @@ Clips in `home.md:47-49` are plain links. Embedding increases watch
 rate.
 
 Plan:
+
 - Add lightweight click-to-play component: poster image + play button,
   swap to iframe on click.
 - Avoid loading YouTube/Vimeo JS until interaction.
@@ -182,6 +195,7 @@ Plan:
 Emerging convention for LLM crawlers. Plain-text site summary.
 
 Plan:
+
 - Create `/llms.txt` route (or static file) with: bio, tagline,
   contact, social links, clips, upcoming shows summary.
 - Keep under ~2KB, plaintext only.
@@ -190,6 +204,7 @@ Plan:
 ### 16. `robots.txt` + sitemap link
 
 Plan:
+
 - Add `/robots.txt` route or static file.
 - Allow all, reference `/sitemap.xml`.
 - Submit sitemap to Google Search Console and Bing Webmaster Tools.
@@ -200,6 +215,7 @@ Plan:
 heading hierarchy, ARIA labels where helpful.
 
 Plan:
+
 - Audit `home.md` structure.
 - Replace `<div class="about">` → `<section>` with heading.
 - Add `aria-label` on nav, social link groups, etc.
@@ -218,6 +234,7 @@ behind JavaScript. Currently good — keep it that way.
 `style.css` is 8KB. Inlining in `<head>` eliminates one round-trip.
 
 Plan:
+
 - Inline the full CSS in `base.jinja2` since file is tiny.
 - Accept tradeoff: no browser caching of CSS. For low-repeat visitor
   profile (bookers), inlining wins.
@@ -228,6 +245,7 @@ Script in `parts.jinja2:93-145` runs on every page even though most
 visitors never open the modal.
 
 Plan:
+
 - Defer registration until first click on the CTA button.
 - Or wrap in `requestIdleCallback`.
 - Minify inline JS.
