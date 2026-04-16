@@ -118,6 +118,14 @@ hr {
 
 img {
     max-width: 100%;
+    /* height: auto pairs with the width/height HTML attributes our
+       <picture> markup emits. The attributes give the browser the
+       intrinsic aspect ratio (so it can reserve space and avoid CLS
+       before the image loads); height:auto tells CSS to derive the
+       rendered height from the rendered width, preserving that ratio.
+       Without this, CSS width:100% fights with a literal height="4000"
+       attribute and the image renders stretched. */
+    height: auto;
 }
 
 code {
