@@ -23,7 +23,6 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     />
-    <script src="https://kit.fontawesome.com/33483263d1.js" crossorigin="anonymous"></script>
     <link rel="shortcut icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E🎤%3C/text%3E%3C/svg%3E">
     {% block jsonld -%}
     {%- for schema in (jsonld or []) %}
@@ -58,11 +57,11 @@
 
         <span id="footer-directive">
         <h2>
-        <a href="https://facebook.com/alexkaufmanlive" aria-label="Alex Kaufman Live Facebook link"><i class="fa-brands fa-facebook" aria-hidden="true"></i></a>
+        <a href="https://facebook.com/alexkaufmanlive" aria-label="Alex Kaufman Live Facebook link">{% include 'icons/facebook.svg' %}</a>
         |
-        <a href="https://instagram.com/alexkaufmanlive" aria-label="Alex Kaufman Live Instagram link"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://instagram.com/alexkaufmanlive" aria-label="Alex Kaufman Live Instagram link">{% include 'icons/instagram.svg' %}</a>
         |
-        <a href="https://youtube.com/@alexkaufmanlive" aria-label="Alex Kaufman Live Youtube link"><i class="fa-brands fa-youtube" aria-hidden="true"></i></a>
+        <a href="https://youtube.com/@alexkaufmanlive" aria-label="Alex Kaufman Live Youtube link">{% include 'icons/youtube.svg' %}</a>
         </h2>
 
         </span>

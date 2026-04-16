@@ -7,20 +7,13 @@ site that converts bookers. Organized roughly by impact/effort ratio.
 
 ## Tier 1 — Huge wins, small effort
 
-### 1. Image pipeline ✅
+### 1. Image pipeline ✓
 
-Current: hero image is 6.8MB, another is 3MB, no `width`/`height`, no
-WebP/AVIF. This is the #1 speed issue on the site.
-
-Plan:
-
-- Write a script (Pillow or `sharp`) to resize + convert everything in
-  `content/static/` to AVIF + WebP + JPEG fallback at multiple widths.
-- Target sizes: hero <200KB, gallery thumbs <100KB.
-- Keep originals in a separate `originals/` dir (gitignored).
-- Update home.md and show templates to use `<picture>` with `srcset`.
-- Add `width`/`height` attrs and `fetchpriority="high"` on LCP image.
-- Add `loading="lazy"` below the fold (already partially done).
+Done. Responsive image pipeline added in `8530795`. Images resized and
+converted to AVIF/WebP/JPEG at multiple widths; `<picture srcset>` in
+templates; `width`/`height` attrs and `fetchpriority="high"` on LCP
+image; `loading="lazy"` below the fold. Pipeline hardened against
+partial deploys in follow-up commits.
 
 ### 2. Put Cloudflare in front
 
@@ -38,29 +31,20 @@ Plan:
 - Purge cache on deploy (can be a curl in `update-site.sh`).
 - Enable Web Analytics (free, cookieless).
 
-### 3. Fix canonical URL ✅
+### 3. Fix canonical URL ✓
 
-`base.jinja2:13` hardcodes the homepage as canonical for every page.
-Currently tells Google every show page is a duplicate of home.
+Done. `base.jinja2:13` now uses `{{ request.base_url }}` as the default
+canonical, with a block override in `shows.jinja2` for paginated show
+index pages.
 
-Plan:
-
-- Replace with `<link rel="canonical" href="{{ request.url }}">` or
-  build it from `request.path`.
-- Verify for home, contact, shows index, individual shows.
-
-### 4. Kill FontAwesome Kit
+### 4. Kill FontAwesome Kit ✓
 
 `base.jinja2:22` loads the whole FontAwesome kit (render-blocking 3rd
 party JS) to show 3 brand icons in the footer.
 
-Plan:
-
-- Grab SVG source for facebook, instagram, youtube brand icons from
-  Simple Icons or FontAwesome Free.
-- Inline them in `base.jinja2` footer.
-- Also replace the inline icons in `home.md` social links.
-- Remove the `kit.fontawesome.com` script tag.
+Done. Removed `kit.fontawesome.com` script tag. Brand icons (Facebook,
+Instagram, YouTube) replaced with Simple Icons SVGs stored in
+`templates/icons/` and included via `{% include %}`.
 
 ### 5. Open Graph + Twitter Card meta tags
 

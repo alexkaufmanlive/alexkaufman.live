@@ -25,17 +25,17 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 <div class="social-media">
 <div class="social-media-item">
 
-[<i class="fa-brands fa-facebook"></i> facebook](https://facebook.com/dustiestgolf)
+[{% include 'icons/facebook.svg' %} facebook](https://facebook.com/dustiestgolf)
 
 </div>
 <div class="social-media-item">
 
-[<i class="fa-brands fa-instagram"></i> instagram](https://instagram.com/alexkaufmanlive)
+[{% include 'icons/instagram.svg' %} instagram](https://instagram.com/alexkaufmanlive)
 
 </div>
 <div class="social-media-item">
 
-[<i class="fa-brands fa-youtube"></i> youtube](https://youtube.com/@alexkaufmanlive)
+[{% include 'icons/youtube.svg' %} youtube](https://youtube.com/@alexkaufmanlive)
 
 </div>
 </div>
