@@ -31,6 +31,13 @@
        start fetching the hero derivative before parsing the <body>. #}
     {{ preload or "" }}
     <link
+        rel="preload"
+        href="{{ url_for('static', filename='bootzy_condensed_tm-webfont.woff2') }}"
+        as="font"
+        type="font/woff2"
+        crossorigin
+    />
+    <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     />
