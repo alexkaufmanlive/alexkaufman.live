@@ -1,5 +1,12 @@
 {% extends "base.jinja2" %}
 {% block title %} shows | {{ site_name }} {% endblock %}
+{% block canonical -%}
+    {%- if page > 1 -%}
+        <link rel="canonical" href="{{ url_for('shows.index', page=page, _external=True) }}" />
+    {%- else -%}
+        <link rel="canonical" href="{{ url_for('shows.index', _external=True) }}" />
+    {%- endif -%}
+{%- endblock %}
 {% block main %}
 
     {% if not has_prev %}

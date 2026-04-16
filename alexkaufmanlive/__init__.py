@@ -6,6 +6,7 @@ from flask import (
     Flask,
     render_template,
 )
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .config import DevConfig, ProdConfig
 
@@ -23,6 +24,11 @@ def create_app():
     if os.getenv("FLASK_ENV") == "production":
         print("loaded ProdConfig")
         config = ProdConfig()
+        # PythonAnywhere terminates TLS at its load balancer and forwards
+        # requests to us over HTTP with X-Forwarded-Proto: https. Trust that
+        # header so request.scheme / request.base_url / url_for(_external)
+        # produce https:// URLs. Only enabled in prod — no proxy in dev.
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
     else:
         print("loaded DevConfig")
         config = DevConfig()

@@ -10,7 +10,7 @@
         name="viewport"
         content="width=device-width, initial-scale=1.0, maximum-scale=5"
     />
-    <link rel="canonical" href="https://alexkaufman.live" />
+    {% block canonical %}<link rel="canonical" href="{{ request.base_url }}" />{% endblock %}
     <meta
         name="description"
         content="{{ tagline }}"
