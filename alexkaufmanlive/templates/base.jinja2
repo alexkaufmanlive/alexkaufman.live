@@ -15,6 +15,17 @@
         name="description"
         content="{{ tagline }}"
     />
+    {% block og_meta %}
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <meta property="og:title" content="{{ title or site_name }}" />
+    <meta property="og:description" content="{{ tagline }}" />
+    <meta property="og:image" content="{{ url_for('static', filename='images/alexkaufmancomedy-1724424682-1200.jpg', _external=True) }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ title or site_name }}" />
+    <meta name="twitter:description" content="{{ tagline }}" />
+    <meta name="twitter:image" content="{{ url_for('static', filename='images/alexkaufmancomedy-1724424682-1200.jpg', _external=True) }}" />
+    {% endblock %}
     {# Optional LCP hint — routes that know their hero image pass the
        preload <link> markup via a `preload` kwarg. Tells the browser to
        start fetching the hero derivative before parsing the <body>. #}
