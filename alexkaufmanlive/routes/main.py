@@ -47,6 +47,8 @@ def home_page():
         "base.jinja2",
         content=content,
         title="alexkaufman.live",
+        og_title="Alex Kaufman | Standup Comedian — Bozeman, Montana",
+        og_description="Former physicist turned standup comedian performing at clubs and festivals across the country. Featured at top venues — available to book.",
         page_class="home",
         preload=build_preload_link(HOME_HERO_IMAGE, image_manifest()),
         jsonld=home_schemas(hero_image_filename="alexkaufmancomedy-1724424682.jpg"),
