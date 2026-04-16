@@ -163,14 +163,18 @@ def git_update():
     if ref != "refs/heads/main":
         return jsonify({"message": f"Ignoring push to {ref}"}), 200
 
-    # Run the update script
+    # Run the update script. The timeout has to be generous enough to
+    # cover a cold image build (Pillow + libavif, ~78 derivatives) on
+    # the first deploy after this pipeline was introduced — 60s wasn't
+    # enough and the script got killed mid-build, leaving the manifest
+    # empty. Subsequent deploys are incremental and finish in <1s.
     try:
         current_app.logger.info("Running deployment script...")
         result = subprocess.run(
             ["/home/dustiestgolf/alexkaufman.live/update-site.sh"],
             capture_output=True,
             text=True,
-            timeout=60,
+            timeout=600,
         )
 
         if result.returncode == 0:

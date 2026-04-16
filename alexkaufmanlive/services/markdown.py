@@ -138,9 +138,11 @@ class ResponsiveImageRenderer(mistune.HTMLRenderer):
         # Local — extract basename so we accept any prefix the author
         # used ("foo.jpg", "/static/foo.jpg", "/static/originals/foo.jpg").
         # URL-decode because url_for percent-encodes filenames with spaces.
+        # render_responsive_picture handles the manifest-missing case by
+        # degrading to <a><img src=/static/originals/..."></a>. We never
+        # delegate to super().image() for local images, because its raw
+        # URL pass-through would emit a relative src that 404s.
         filename = unquote(os.path.basename(url))
-        if filename not in self.manifest:
-            return super().image(text, url, title)
         return render_responsive_picture(filename, self.manifest, alt=text or "")
 
     def link(self, text, url, title=None):
