@@ -1,5 +1,18 @@
 {% extends "base.jinja2" %}
 
+{% block og_meta %}
+    {% set _og_img = url_for('static', filename='originals/' + image, _external=True) if image else url_for('static', filename='images/alexkaufmancomedy-1724424682-1200.jpg', _external=True) %}
+    <meta property="og:type" content="event" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:description" content="{{ meta.description or tagline }}" />
+    <meta property="og:image" content="{{ _og_img }}" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{ title }}" />
+    <meta name="twitter:description" content="{{ meta.description or tagline }}" />
+    <meta name="twitter:image" content="{{ _og_img }}" />
+{% endblock %}
+
 {% block title %} {{ title }} {% endblock %}
 
 {% block main %}
