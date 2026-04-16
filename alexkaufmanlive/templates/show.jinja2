@@ -2,26 +2,14 @@
 
 {% block og_meta %}
     {% set _og_img = url_for('static', filename='originals/' + image, _external=True) if image else url_for('static', filename='images/alexkaufmancomedy-1724424682-1200.jpg', _external=True) %}
-    {%- if meta.city and meta.state %}
-        {% set _location = meta.city + ', ' + meta.state %}
-    {%- elif meta.city %}
-        {% set _location = meta.city %}
-    {%- else %}
-        {% set _location = '' %}
-    {%- endif %}
-    {%- if _location %}
-        {% set _og_desc = 'Alex Kaufman live in ' + _location + '. A former physicist who swapped science for standup comedy.' %}
-    {%- else %}
-        {% set _og_desc = 'A former physicist who swapped science for standup comedy. Performing at clubs and festivals across the country.' %}
-    {%- endif %}
     <meta property="og:type" content="event" />
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title" content="{{ title }}" />
-    <meta property="og:description" content="{{ _og_desc }}" />
+    <meta property="og:description" content="{{ og_description }}" />
     <meta property="og:image" content="{{ _og_img }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{ title }}" />
-    <meta name="twitter:description" content="{{ _og_desc }}" />
+    <meta name="twitter:description" content="{{ og_description }}" />
     <meta name="twitter:image" content="{{ _og_img }}" />
 {% endblock %}
 

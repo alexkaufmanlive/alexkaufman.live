@@ -39,6 +39,13 @@ def index():
     )
 
 
+def _show_og_description(show):
+    meta = show.get("meta") or {}
+    location = ", ".join(filter(None, [meta.get("city"), meta.get("state")]))
+    prefix = f"Alex Kaufman live in {location}." if location else "Alex Kaufman live."
+    return f"{prefix} A former physicist who swapped science for standup comedy."
+
+
 @bp.route("/<show_slug>")
 def show(show_slug):
     """Render a single show page."""
@@ -53,6 +60,7 @@ def show(show_slug):
     # Content is already rendered HTML at this point.
     return render_template(
         "show.jinja2",
+        og_description=_show_og_description(show),
         jsonld=event_schemas(show, page_url=request.url),
         **show,
     )
