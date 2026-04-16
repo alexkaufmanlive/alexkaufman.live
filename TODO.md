@@ -36,17 +36,14 @@ Done. `base.jinja2:13` now uses `{{ request.base_url }}` as the default
 canonical, with a block override in `shows.jinja2` for paginated show
 index pages.
 
-### 4. Kill FontAwesome Kit
+### 4. Kill FontAwesome Kit ✓
 
 `base.jinja2:22` loads the whole FontAwesome kit (render-blocking 3rd
 party JS) to show 3 brand icons in the footer.
 
-Plan:
-- Grab SVG source for facebook, instagram, youtube brand icons from
-  Simple Icons or FontAwesome Free.
-- Inline them in `base.jinja2` footer.
-- Also replace the inline icons in `home.md` social links.
-- Remove the `kit.fontawesome.com` script tag.
+Done. Removed `kit.fontawesome.com` script tag. Brand icons (Facebook,
+Instagram, YouTube) replaced with Simple Icons SVGs stored in
+`templates/icons/` and included via `{% include %}`.
 
 ### 5. Open Graph + Twitter Card meta tags
 
