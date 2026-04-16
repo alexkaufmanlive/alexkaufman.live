@@ -9,7 +9,6 @@ import frontmatter
 from flask import (
     Blueprint,
     current_app,
-    get_template_attribute,
     jsonify,
     make_response,
     render_template,
@@ -39,8 +38,6 @@ def home_page():
     content = render_page(
         home.content,
         upcoming_shows=upcoming_shows(),
-        show_list=get_template_attribute("parts.jinja2", "show_list"),
-        email_list_cta=get_template_attribute("parts.jinja2", "email_list_cta"),
     )
 
     return render_template(
@@ -98,11 +95,7 @@ def contact_page():
 
     contactpage = frontmatter.load(str(home_path))
 
-    content = render_page(
-        contactpage.content,
-        show_list=get_template_attribute("parts.jinja2", "show_list"),
-        email_list_cta=get_template_attribute("parts.jinja2", "email_list_cta"),
-    )
+    content = render_page(contactpage.content)
 
     return render_template(
         "base.jinja2",
