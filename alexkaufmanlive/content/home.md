@@ -1,6 +1,4 @@
-<a href="{{ url_for('static', filename='alexkaufmancomedy-1724424682.jpg') }}">
-  <img src="{{ url_for('static', filename='alexkaufmancomedy-1724424682.jpg') }}" alt="Alex Kaufman Comedy">
-</a>
+![Alex Kaufman Comedy](alexkaufmancomedy-1724424682.jpg)
 
 **{{ tagline }}**
 
@@ -59,21 +57,21 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 <div class="gallery">
 
 <div class="gallery_img gallery_item-1">
-  <a href="{{ url_for('static', filename='alexkaufmancomedy-1724385868.jpg') }}">
-    <img src="{{ url_for('static', filename='alexkaufmancomedy-1724385868.jpg') }}" alt="Alex Kaufman mic shot." loading="lazy">
-  </a>
+
+![Alex Kaufman mic shot.](alexkaufmancomedy-1724385868.jpg)
+
 </div>
 
 <div class="gallery_img gallery_item-2">
-  <a href="{{ url_for('static', filename='alexkaufmancomedy-1724385732.jpg') }}">
-    <img src="{{ url_for('static', filename='alexkaufmancomedy-1724385732.jpg') }}" alt="Alex Kaufman black and white." loading="lazy">
-  </a>
+
+![Alex Kaufman black and white.](alexkaufmancomedy-1724385732.jpg)
+
 </div>
 
 <div class="gallery_img gallery_item-3">
-  <a href="{{ url_for('static', filename='alexkaufmancomedy-1724385803.jpg') }}">
-    <img src="{{ url_for('static', filename='alexkaufmancomedy-1724385803.jpg') }}" alt="Alex Kaufman in color." loading="lazy">
-  </a>
+
+![Alex Kaufman in color.](alexkaufmancomedy-1724385803.jpg)
+
 </div>
 
 </div>

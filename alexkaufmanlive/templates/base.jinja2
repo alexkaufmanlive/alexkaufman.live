@@ -15,6 +15,10 @@
         name="description"
         content="{{ tagline }}"
     />
+    {# Optional LCP hint — routes that know their hero image pass the
+       preload <link> markup via a `preload` kwarg. Tells the browser to
+       start fetching the hero derivative before parsing the <body>. #}
+    {{ preload or "" }}
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"

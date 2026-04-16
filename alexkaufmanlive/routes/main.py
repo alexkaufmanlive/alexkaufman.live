@@ -17,9 +17,13 @@ from flask import (
 )
 from flask.helpers import redirect
 
-from ..content import all_shows, upcoming_shows
+from ..content import all_shows, image_manifest, upcoming_shows
 from ..services.email import bonedry_optin, subscribe_to_buttondown
-from ..services.markdown import render_page
+from ..services.markdown import build_preload_link, render_page
+
+# The hero image on the home page. Preloaded in <head> so the browser
+# starts fetching it before parsing the body — our LCP element.
+HOME_HERO_IMAGE = "alexkaufmancomedy-1724424682.jpg"
 
 bp = Blueprint("main", __name__)
 
@@ -38,7 +42,11 @@ def home_page():
     )
 
     return render_template(
-        "base.jinja2", content=content, title="alexkaufman.live", page_class="home"
+        "base.jinja2",
+        content=content,
+        title="alexkaufman.live",
+        page_class="home",
+        preload=build_preload_link(HOME_HERO_IMAGE, image_manifest()),
     )
 
 

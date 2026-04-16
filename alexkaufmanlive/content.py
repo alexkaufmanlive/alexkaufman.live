@@ -4,10 +4,15 @@ Reads all show markdown files at app startup, pre-renders their content
 HTML once, and exposes accessors for the routes. Replaces the previous
 SQLite-backed `shows` table.
 
+Also loads the image manifest built by scripts/build_images.py. The
+manifest is consumed by services.markdown.ResponsiveImageRenderer to
+rewrite every local markdown image into a responsive <picture> tag.
+
 Content is refreshed only on app reload (e.g. after a git push triggers
 the `/git_update` webhook, which touches the WSGI file).
 """
 
+import json
 import pathlib
 from datetime import date, datetime
 
@@ -21,6 +26,7 @@ from .services.markdown import render_page
 # or bracket access.
 _shows_by_link: dict[str, dict] = {}
 _shows_sorted: list[dict] = []  # ascending by show_date
+_image_manifest: dict[str, dict] = {}
 
 
 def load_shows(app):
@@ -30,7 +36,22 @@ def load_shows(app):
     url_for() (used inside the email_list_cta macro) resolves correctly
     while pre-rendering.
     """
-    global _shows_by_link, _shows_sorted
+    global _shows_by_link, _shows_sorted, _image_manifest
+
+    # Load the image manifest produced by scripts/build_images.py. If it's
+    # missing (e.g. build script never ran in dev), log loud and carry on;
+    # the markdown renderer falls back to unoptimized originals.
+    manifest_path = (
+        pathlib.Path(app.root_path) / "content/static/images/manifest.json"
+    )
+    if manifest_path.exists():
+        _image_manifest = json.loads(manifest_path.read_text())
+    else:
+        _image_manifest = {}
+        app.logger.error(
+            "image manifest not found at %s — run `python scripts/build_images.py`",
+            manifest_path,
+        )
 
     shows_path = pathlib.Path(app.root_path) / "content/shows"
     show_files = sorted(shows_path.glob("**/*.md"))
@@ -133,6 +154,11 @@ def upcoming_shows(today: date | None = None) -> list[dict]:
     """Shows on or after today, ascending by date."""
     today = today or date.today()
     return [s for s in _shows_sorted if s["show_date"] >= today]
+
+
+def image_manifest() -> dict[str, dict]:
+    """Manifest of image derivatives, keyed by original filename."""
+    return _image_manifest
 
 
 def past_shows_page(

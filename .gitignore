@@ -65,6 +65,10 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
+# Generated image derivatives (built from content/static/originals/ on deploy).
+# Originals are committed; everything in images/ is reproducible output.
+alexkaufmanlive/content/static/images/
+
 # Scrapy stuff:
 .scrapy
 
