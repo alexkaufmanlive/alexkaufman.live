@@ -17,7 +17,6 @@ import pathlib
 from datetime import date, datetime
 
 import frontmatter
-from flask import get_template_attribute
 
 from .services.markdown import render_page
 
@@ -59,20 +58,9 @@ def load_shows(app):
     by_link: dict[str, dict] = {}
 
     with app.test_request_context():
-        macros = {
-            "eventbrite_button": get_template_attribute(
-                "parts.jinja2", "eventbrite_button"
-            ),
-            "event_button": get_template_attribute("parts.jinja2", "event_button"),
-            "tickettailor_button": get_template_attribute(
-                "parts.jinja2", "tickettailor_button"
-            ),
-            "email_list_cta": get_template_attribute("parts.jinja2", "email_list_cta"),
-        }
-
         for show_file in show_files:
             try:
-                show = _load_one_show(show_file, macros)
+                show = _load_one_show(show_file)
             except Exception as e:
                 app.logger.error(f"failed to load show {show_file.name}: {e}")
                 continue
@@ -89,7 +77,7 @@ def load_shows(app):
     app.logger.info(f"loaded {len(_shows_sorted)} shows")
 
 
-def _load_one_show(show_file: pathlib.Path, macros: dict) -> dict:
+def _load_one_show(show_file: pathlib.Path) -> dict:
     post = frontmatter.load(str(show_file))
     data = post.to_dict()
 
@@ -111,7 +99,6 @@ def _load_one_show(show_file: pathlib.Path, macros: dict) -> dict:
             meta=meta,
             image=image,
             redirect=redirect_url,
-            **macros,
         )
     else:
         content_html = ""
