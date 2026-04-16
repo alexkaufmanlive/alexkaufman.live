@@ -33,17 +33,10 @@ def create_app():
     # Load configuration
     app.config.from_mapping(
         SECRET_KEY=config.secret_key,
-        DATABASE=os.path.join(app.instance_path, config.database),
         GITHUB_WEBHOOK_SECRET=config.github_webhook_secret,
         BUTTONDOWN_API_TOKEN=config.buttondown_api_token,
     )
     app.logger.setLevel(config.log_level)
-
-    # Ensure instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
 
     # Register context processor
     @app.context_processor
@@ -73,9 +66,10 @@ def create_app():
     app.register_blueprint(main.bp)
     app.register_blueprint(shows.bp)
 
-    # Initialize database
-    from . import db
+    # Load all show content into memory. This is the single source of truth;
+    # content is refreshed by reloading the app (touching the WSGI file).
+    from . import content
 
-    db.init_app(app)
+    content.load_shows(app)
 
     return app

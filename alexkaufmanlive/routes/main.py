@@ -17,7 +17,7 @@ from flask import (
 )
 from flask.helpers import redirect
 
-from ..db import get_db
+from ..content import all_shows, upcoming_shows
 from ..services.email import bonedry_optin, subscribe_to_buttondown
 from ..services.markdown import render_page
 
@@ -27,22 +27,12 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 def home_page():
     """Builds the home page of the site."""
-    db = get_db()
     home_path = pathlib.Path(current_app.root_path) / "content/home.md"
-
-    upcoming_shows = db.execute(
-        (
-            "SELECT id, title, show_date, link, meta"
-            " FROM shows"
-            " WHERE show_date >= date('now', 'localtime')"
-            " ORDER BY show_date ASC"
-        )
-    ).fetchall()
 
     home = frontmatter.load(str(home_path))
     content = render_page(
         home.content,
-        upcoming_shows=upcoming_shows,
+        upcoming_shows=upcoming_shows(),
         show_list=get_template_attribute("parts.jinja2", "show_list"),
         email_list_cta=get_template_attribute("parts.jinja2", "email_list_cta"),
     )
@@ -74,11 +64,7 @@ def sitemap():
             urls.append(url)
 
     # Dynamic routes with dynamic content
-    db = get_db()
-    shows = db.execute(
-        "SELECT id, title, show_date, link FROM shows ORDER BY show_date ASC"
-    ).fetchall()
-    for show in shows:
+    for show in all_shows():
         url = {
             "loc": f"{host_base}/shows/{show['link']}",
         }
@@ -97,7 +83,6 @@ def sitemap():
 @bp.route("/contact/")
 def contact_page():
     """Builds the contact page of the site."""
-    db = get_db()
     home_path = pathlib.Path(current_app.root_path) / "content/contact.md"
 
     contactpage = frontmatter.load(str(home_path))

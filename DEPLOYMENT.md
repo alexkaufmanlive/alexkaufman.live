@@ -8,7 +8,7 @@ When you push changes to the `main` branch on GitHub:
 
 1. GitHub sends a webhook POST request to your PythonAnywhere site
 2. The `/git_update` endpoint validates the request and runs `update-site.sh`
-3. The script pulls the latest code, updates the database, and reloads the web app
+3. The script pulls the latest code and reloads the web app (which re-reads show markdown files into memory)
 
 ## Prerequisites
 
@@ -30,7 +30,6 @@ When you push changes to the `main` branch on GitHub:
 
    - **Item:** `prod_site`
      - **Field:** `secret_key` - Flask secret key for sessions
-     - **Field:** `database` - Database configuration (if needed)
 
    - **Item:** `github-webhook`
      - **Field:** `secret` - GitHub webhook secret token

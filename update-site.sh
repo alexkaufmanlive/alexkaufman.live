@@ -16,9 +16,8 @@ if git diff --name-only $OLD_COMMIT HEAD | grep -q "pyproject.toml"; then
     pip install -e .
 fi
 
-flask --app alexkaufmanlive update-db
-
-# Touch WSGI file to reload the web app
+# Touch WSGI file to reload the web app. The app reads all show markdown
+# files into memory at startup, so the reload is what picks up new content.
 touch /var/www/alexkaufman_live_wsgi.py
 
 popd

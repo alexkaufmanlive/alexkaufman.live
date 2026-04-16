@@ -9,7 +9,6 @@ from onepassword.client import Client
 
 SECRET_REFS = {
     "SECRET_KEY": "op://alexkaufman.live/prod_site/secret_key",
-    "DATABASE": "op://alexkaufman.live/prod_site/database",
     "GITHUB_WEBHOOK_SECRET": "op://alexkaufman.live/github-webhook/secret",
     "BUTTONDOWN_API_TOKEN": "op://alexkaufman.live/buttondown/api-token",
 }
@@ -19,7 +18,6 @@ SECRET_REFS = {
 class Config:
     """Base configuration shared by all environments."""
 
-    database: str
     secret_key: str
     github_webhook_secret: str | None
     buttondown_api_token: str | None
@@ -31,7 +29,6 @@ class DevConfig(Config):
     """Development configuration with safe defaults."""
 
     def __init__(self):
-        self.database = "alexkaufmanlive.sqlite"
         self.secret_key = "dev-secret-key-not-for-production"
         self.github_webhook_secret = None
         self.buttondown_api_token = None
@@ -44,7 +41,6 @@ class ProdConfig(Config):
 
     def __init__(self):
         secrets = asyncio.run(_load_secrets_async())
-        self.database = secrets["DATABASE"]
         self.secret_key = secrets["SECRET_KEY"]
         self.github_webhook_secret = secrets["GITHUB_WEBHOOK_SECRET"]
         self.buttondown_api_token = secrets["BUTTONDOWN_API_TOKEN"]
