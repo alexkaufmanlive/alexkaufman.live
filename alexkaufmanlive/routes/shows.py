@@ -7,6 +7,7 @@ from flask import (
 )
 
 from ..content import get_show, past_shows_page, upcoming_shows
+from ..services.jsonld import default_schemas, event_schemas
 
 bp = Blueprint("shows", __name__, url_prefix="/shows")
 shows_metadata = {"page_class": "shows"}
@@ -34,6 +35,7 @@ def index():
         has_prev=page > 1,
         has_next=has_next,
         title="alexkaufman.live | shows",
+        jsonld=default_schemas(),
     )
 
 
@@ -49,4 +51,8 @@ def show(show_slug):
         return redirect(show["redirect"], code=302)
 
     # Content is already rendered HTML at this point.
-    return render_template("show.jinja2", **show)
+    return render_template(
+        "show.jinja2",
+        jsonld=event_schemas(show, page_url=request.url),
+        **show,
+    )

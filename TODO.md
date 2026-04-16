@@ -96,19 +96,15 @@ Plan:
 - Version the CSS filename (`style.v2.css`) to cache-bust on change.
 - If Cloudflare is in place (#2), this is handled at the edge.
 
-### 8. JSON-LD Person schema
+### 8. JSON-LD Person schema ✓
 
-Already have Event schema on show pages. Add Person on home.
+Done. JSON-LD is now built in Python (`services/jsonld.py`) and
+rendered through the base template via a `jsonld` context variable.
+Every page gets `WebSite`; home adds `Person`; show pages keep
+`Event` (refactored off inline string interpolation).
 
-Plan:
-- Add `<script type="application/ld+json">` block to home page with:
-  - `@type: Person`
-  - `name`, `jobTitle: "Stand-up Comedian"`
-  - `sameAs`: social media URLs
-  - `url`: site URL
-  - `image`: hero photo
-  - `worksFor` / `alumniOf` as appropriate
-- Consider `PerformingGroup` schema too if relevant.
+Possible follow-up: `PerformingGroup` schema, `worksFor` / `alumniOf`
+on Person.
 
 ### 9. Font loading optimization
 

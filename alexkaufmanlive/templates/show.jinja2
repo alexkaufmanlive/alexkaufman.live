@@ -2,33 +2,6 @@
 
 {% block title %} {{ title }} {% endblock %}
 
-{% block head %}
-{{ super() }}
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Event",
-  "location": {
-    "@type": "Place",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "{{ meta.city }}",
-      "addressRegion": "{{ meta.state }}",
-      "postalCode": "{{ meta.zip_code }}",
-      "streetAddress": "{{ meta.street_address }}"
-    },
-    "name": "{{ meta.venue }}"
-  },
-  "name": "{{ title }}",
-  "startDate": "{{ show_date}}",
-  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
-  "eventStatus": "https://schema.org/EventScheduled",
-  "description": "{{ meta.description }}",
-  "image": "{% if meta.image %}{{ url_for('static', filename='originals/' + meta.image) }}{% endif %}"
-}
-</script>
-{% endblock %}
-
 {% block main %}
     <div class='show-head'>
         <h1 class='show-title'>{{ title }}</h1>
