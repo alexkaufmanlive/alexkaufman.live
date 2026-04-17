@@ -46,6 +46,8 @@ A short blurb if you want one. Plain markdown.
 | `meta.city`, `meta.state` | no | Shown next to the date. |
 | `meta.show_time` | no | Free-form, e.g. `8:00pm`. |
 | `meta.event_link` | no | Powers the "Get Tickets" button. |
+| `meta.price` | no | Numeric ticket price (e.g. `15` or `15.00`). When set, Google can show "Tickets from $X" in Event rich results — worth adding whenever you know the number. |
+| `meta.price_currency` | no | ISO-4217 currency code, e.g. `USD`, `CAD`. Defaults to `USD`. |
 | `redirect` | no | If set, clicking the show goes straight to that URL — use for 3rd-party ticketing. |
 | `image` | no | Filename in `content/static/originals/`. See *Adding images* below. |
 

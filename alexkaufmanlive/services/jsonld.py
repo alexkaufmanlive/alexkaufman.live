@@ -153,11 +153,19 @@ def event_schema(show, page_url=None, fallback_image_url=None):
 
     event_link = meta.get("event_link")
     if event_link:
-        schema["offers"] = {
+        offer = {
             "@type": "Offer",
             "url": event_link,
             "availability": "https://schema.org/InStock",
         }
+        # Google's "Tickets from $X" rich snippets need numeric price
+        # data. When meta.price is set, pair it with priceCurrency
+        # (default USD) — schema.org requires both or neither.
+        price = meta.get("price")
+        if price is not None:
+            offer["price"] = str(price)
+            offer["priceCurrency"] = meta.get("price_currency", "USD")
+        schema["offers"] = offer
 
     return schema
 
