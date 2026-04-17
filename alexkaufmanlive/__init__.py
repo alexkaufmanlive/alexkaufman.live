@@ -6,6 +6,7 @@ from flask import (
     Flask,
     get_template_attribute,
     render_template,
+    url_for,
 )
 from werkzeug.middleware.proxy_fix import ProxyFix
 
@@ -73,6 +74,20 @@ def create_app():
             "eventbrite_button": get_template_attribute("parts.jinja2", "eventbrite_button"),
             "tickettailor_button": get_template_attribute("parts.jinja2", "tickettailor_button"),
         }
+
+    # Preload hint for the stylesheet via Link response header. Browsers
+    # start fetching as soon as the response headers arrive, in parallel
+    # with receiving the HTML body — shaving a few tens of milliseconds
+    # off the critical path. A CDN that supports 103 Early Hints (e.g.
+    # Cloudflare) can also upgrade this header into a real 103 response,
+    # saving the full TTFB. Scoped to HTML responses so static assets
+    # don't carry the header.
+    @app.after_request
+    def add_preload_link_header(response):
+        if response.mimetype == "text/html":
+            style_url = url_for("static", filename="style.css")
+            response.headers.add("Link", f"<{style_url}>; rel=preload; as=style")
+        return response
 
     # Register error handlers
     @app.errorhandler(404)
