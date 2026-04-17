@@ -59,10 +59,7 @@ def sitemap():
     lastmod and priority tags omitted on static pages.
     lastmod included on dynamic content such as blog posts.
     """
-    from urllib.parse import urlparse
-
-    host_components = urlparse(request.host_url)
-    host_base = host_components.scheme + "://" + host_components.netloc
+    host_base = request.host_url.rstrip("/")
 
     urls = list()
     # Static routes with static content
