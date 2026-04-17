@@ -18,8 +18,8 @@ from flask.helpers import redirect
 
 from ..content import all_shows, image_manifest, upcoming_shows
 from ..services.email import bonedry_optin, subscribe_to_buttondown
-from ..services.markdown import build_preload_link, render_page
 from ..services.jsonld import default_schemas, home_schemas
+from ..services.markdown import build_preload_link, render_page
 
 # The hero image on the home page. Preloaded in <head> so the browser
 # starts fetching it before parsing the body — our LCP element.
@@ -44,6 +44,8 @@ def home_page():
         "base.jinja2",
         content=content,
         title="alexkaufman.live",
+        og_title="Alex Kaufman | standup comic/former physicist",
+        og_description="A former physicist who swapped science for standup comedy. Performing at clubs and festivals across the country.",
         page_class="home",
         preload=build_preload_link(HOME_HERO_IMAGE, image_manifest()),
         jsonld=home_schemas(hero_image_filename="alexkaufmancomedy-1724424682.jpg"),

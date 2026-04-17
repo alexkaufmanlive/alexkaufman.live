@@ -5,11 +5,11 @@
     <meta property="og:type" content="event" />
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title" content="{{ title }}" />
-    <meta property="og:description" content="{{ meta.description or tagline }}" />
+    <meta property="og:description" content="{{ og_description }}" />
     <meta property="og:image" content="{{ _og_img }}" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="{{ title }}" />
-    <meta name="twitter:description" content="{{ meta.description or tagline }}" />
+    <meta name="twitter:description" content="{{ og_description }}" />
     <meta name="twitter:image" content="{{ _og_img }}" />
 {% endblock %}
 
