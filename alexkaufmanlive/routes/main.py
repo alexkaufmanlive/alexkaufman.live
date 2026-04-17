@@ -11,10 +11,10 @@ from flask import (
     current_app,
     jsonify,
     make_response,
+    redirect,
     render_template,
     request,
 )
-from flask.helpers import redirect
 
 from ..content import all_shows, image_manifest, upcoming_shows
 from ..services.email import bonedry_optin, subscribe_to_buttondown
