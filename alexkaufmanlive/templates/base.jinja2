@@ -15,6 +15,7 @@
     />
     {% block og_meta %}
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{ site_name }}" />
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title" content="{{ title or site_name }}" />
     <meta property="og:description" content="{{ tagline }}" />

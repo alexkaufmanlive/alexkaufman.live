@@ -3,6 +3,7 @@
 {% block og_meta %}
     {% set _og_img = url_for('static', filename='originals/' + image, _external=True) if image else og_image_url %}
     <meta property="og:type" content="event" />
+    <meta property="og:site_name" content="{{ site_name }}" />
     <meta property="og:url" content="{{ request.url }}" />
     <meta property="og:title" content="{{ title }}" />
     <meta property="og:description" content="{{ meta.description or tagline }}" />
