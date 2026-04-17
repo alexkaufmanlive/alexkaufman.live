@@ -2,10 +2,8 @@
 
 import hashlib
 import hmac
-import pathlib
 import subprocess
 
-import frontmatter
 from flask import (
     Blueprint,
     current_app,
@@ -17,10 +15,15 @@ from flask import (
 )
 
 from .. import site_metadata
-from ..content import all_shows, image_manifest, upcoming_shows
+from ..content import (
+    all_shows,
+    image_manifest,
+    render_markdown_page,
+    upcoming_shows,
+)
 from ..services.email import bonedry_optin, subscribe_to_buttondown
 from ..services.jsonld import default_schemas, home_schemas
-from ..services.markdown import build_preload_link, og_image_url, render_page
+from ..services.markdown import build_preload_link, og_image_url
 
 bp = Blueprint("main", __name__)
 
@@ -28,20 +31,12 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 def home_page():
     """Builds the home page of the site."""
-    home_path = pathlib.Path(current_app.root_path) / "content/home.md"
-
-    home = frontmatter.load(str(home_path))
-    content = render_page(
-        home.content,
-        upcoming_shows=upcoming_shows(),
-    )
-
     hero = site_metadata["og_image"]
     manifest = image_manifest()
 
     return render_template(
         "base.jinja2",
-        content=content,
+        content=render_markdown_page("home.md", upcoming_shows=upcoming_shows()),
         title="alexkaufman.live",
         page_class="home",
         preload=build_preload_link(hero, manifest),
@@ -87,15 +82,9 @@ def sitemap():
 @bp.route("/contact/")
 def contact_page():
     """Builds the contact page of the site."""
-    contact_path = pathlib.Path(current_app.root_path) / "content/contact.md"
-
-    contactpage = frontmatter.load(str(contact_path))
-
-    content = render_page(contactpage.content)
-
     return render_template(
         "base.jinja2",
-        content=content,
+        content=render_markdown_page("contact.md"),
         title="alexkaufman.live",
         page_class="home",
         jsonld=default_schemas(),

@@ -17,6 +17,7 @@ import pathlib
 from datetime import date, datetime
 
 import frontmatter
+from flask import current_app
 
 from .services.markdown import render_page
 
@@ -223,6 +224,18 @@ def upcoming_shows(today: date | None = None) -> list[dict]:
 def image_manifest() -> dict[str, dict]:
     """Manifest of image derivatives, keyed by original filename."""
     return _image_manifest
+
+
+def render_markdown_page(filename: str, **kwargs) -> str:
+    """Render a markdown page in content/ with Jinja kwargs.
+
+    Shows are pre-rendered at startup; home/contact are rendered per
+    request because they accept dynamic kwargs (e.g. upcoming_shows)
+    and the cost of one frontmatter.load + render is negligible.
+    """
+    path = pathlib.Path(current_app.root_path) / "content" / filename
+    post = frontmatter.load(str(path))
+    return render_page(post.content, **kwargs)
 
 
 def past_shows_page(
