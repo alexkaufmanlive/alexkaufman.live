@@ -36,7 +36,9 @@ def home_page():
 
     return render_template(
         "base.jinja2",
-        content=render_markdown_page("home.md", upcoming_shows=upcoming_shows()),
+        content=render_markdown_page(
+            "home.md", hero_filename=hero, upcoming_shows=upcoming_shows()
+        ),
         title="alexkaufman.live",
         og_title="Alex Kaufman | standup comic/former physicist",
         og_description="A former physicist who swapped science for standup comedy. Performing at clubs and festivals across the country.",
