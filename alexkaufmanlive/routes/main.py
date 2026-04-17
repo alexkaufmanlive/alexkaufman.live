@@ -91,9 +91,9 @@ def sitemap():
 @bp.route("/contact/")
 def contact_page():
     """Builds the contact page of the site."""
-    home_path = pathlib.Path(current_app.root_path) / "content/contact.md"
+    contact_path = pathlib.Path(current_app.root_path) / "content/contact.md"
 
-    contactpage = frontmatter.load(str(home_path))
+    contactpage = frontmatter.load(str(contact_path))
 
     content = render_page(contactpage.content)
 
