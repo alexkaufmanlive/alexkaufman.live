@@ -18,6 +18,15 @@ from flask import url_for
 
 SITE_URL = "https://alexkaufman.live"
 
+# Stable @id URIs for the site's core entities. Using absolute URLs with
+# fragment anchors is the standard schema.org pattern for giving entities
+# identity across pages: Person is defined on the home page, but Events
+# and WebSite on other pages can reference the same identity via @id.
+# Google and other crawlers merge schemas that share an @id into one
+# entity in their knowledge graph.
+WEBSITE_ID = f"{SITE_URL}/#website"
+PERSON_ID = f"{SITE_URL}/#person"
+
 # Social profiles surfaced via `sameAs` so search engines can connect
 # the Person entity to its off-site identities.
 SOCIAL_URLS = [
@@ -27,21 +36,34 @@ SOCIAL_URLS = [
 ]
 
 
+def _person_ref():
+    """Inline reference to the Person entity defined on the home page.
+
+    Carries `@id` for graph stitching plus a type+name for crawlers that
+    don't resolve cross-page references (Facebook, LinkedIn, Slack).
+    """
+    return {"@type": "Person", "@id": PERSON_ID, "name": "Alex Kaufman"}
+
+
 def website_schema():
     """Site-level WebSite schema. Safe to include on every page."""
     return {
         "@context": "https://schema.org",
         "@type": "WebSite",
+        "@id": WEBSITE_ID,
         "name": "Alex Kaufman",
         "url": SITE_URL,
+        "author": _person_ref(),
+        "publisher": _person_ref(),
     }
 
 
-def person_schema(image_url=None):
+def person_schema(image_url=None, description=None):
     """Person schema describing Alex. Belongs on the home page."""
     schema = {
         "@context": "https://schema.org",
         "@type": "Person",
+        "@id": PERSON_ID,
         "name": "Alex Kaufman",
         "jobTitle": "Stand-up Comedian",
         "url": SITE_URL,
@@ -49,6 +71,8 @@ def person_schema(image_url=None):
     }
     if image_url:
         schema["image"] = image_url
+    if description:
+        schema["description"] = description
     return schema
 
 
@@ -82,6 +106,7 @@ def event_schema(show, page_url=None):
         {
             "@context": "https://schema.org",
             "@type": "Event",
+            "@id": page_url,
             "name": show.get("title"),
             "startDate": _isoformat(show.get("show_date")),
             "url": page_url,
@@ -89,7 +114,7 @@ def event_schema(show, page_url=None):
             "eventStatus": "https://schema.org/EventScheduled",
             "description": meta.get("description"),
             "location": location if len(location) > 1 else None,
-            "performer": {"@type": "Person", "name": "Alex Kaufman"},
+            "performer": _person_ref(),
         }
     )
 
@@ -111,8 +136,8 @@ def event_schema(show, page_url=None):
 # --- Per-page schema lists --------------------------------------------
 
 
-def home_schemas(hero_image_url=None):
-    return [website_schema(), person_schema(hero_image_url)]
+def home_schemas(hero_image_url=None, description=None):
+    return [website_schema(), person_schema(hero_image_url, description)]
 
 
 def event_schemas(show, page_url=None):

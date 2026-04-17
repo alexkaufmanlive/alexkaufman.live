@@ -40,7 +40,10 @@ def home_page():
         title="alexkaufman.live",
         page_class="home",
         preload=build_preload_link(hero, manifest),
-        jsonld=home_schemas(hero_image_url=og_image_url(hero, manifest)),
+        jsonld=home_schemas(
+            hero_image_url=og_image_url(hero, manifest),
+            description=site_metadata["tagline"],
+        ),
     )
 
 
