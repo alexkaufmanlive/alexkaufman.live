@@ -10,12 +10,6 @@ from ..content import get_show, past_shows_page, upcoming_shows
 from ..services.jsonld import default_schemas, event_schemas
 
 bp = Blueprint("shows", __name__, url_prefix="/shows")
-shows_metadata = {"page_class": "shows"}
-
-
-@bp.context_processor
-def inject_sitename():
-    return shows_metadata
 
 
 @bp.route("/")
@@ -35,6 +29,7 @@ def index():
         has_prev=page > 1,
         has_next=has_next,
         title="alexkaufman.live | shows",
+        page_class="shows",
         jsonld=default_schemas(),
     )
 
@@ -54,5 +49,6 @@ def show(show_slug):
     return render_template(
         "show.jinja2",
         jsonld=event_schemas(show, page_url=request.url),
+        page_class="shows",
         **show,
     )
