@@ -14,6 +14,10 @@ from .config import DevConfig, ProdConfig
 site_metadata = {
     "site_name": "Alex Kaufman",
     "tagline": "standup comic/former physicist",
+    # Hero / LCP image filename (in content/static/originals/). Also used
+    # as the default Open Graph / Twitter / Person.image. Change it here
+    # and every <meta> tag and schema follows.
+    "og_image": "alexkaufmancomedy-1724424682.jpg",
 }
 
 
@@ -48,7 +52,17 @@ def create_app():
     # Register context processor
     @app.context_processor
     def inject_sitename():
-        return site_metadata
+        # Lazy imports to avoid loading content/services at module import
+        # time — keeps __init__.py a thin factory.
+        from .content import image_manifest
+        from .services.markdown import og_image_url
+
+        return {
+            **site_metadata,
+            "og_image_url": og_image_url(
+                site_metadata["og_image"], image_manifest()
+            ),
+        }
 
     @app.context_processor
     def inject_parts():

@@ -16,15 +16,11 @@ from flask import (
     request,
 )
 
+from .. import site_metadata
 from ..content import all_shows, image_manifest, upcoming_shows
 from ..services.email import bonedry_optin, subscribe_to_buttondown
-from ..services.markdown import build_preload_link, render_page
 from ..services.jsonld import default_schemas, home_schemas
-
-# The hero image on the home page. Preloaded in <head> so the browser
-# starts fetching it before parsing the body — our LCP element.
-HOME_HERO_IMAGE = "alexkaufmancomedy-1724424682.jpg"
-
+from ..services.markdown import build_preload_link, og_image_url, render_page
 
 bp = Blueprint("main", __name__)
 
@@ -40,13 +36,16 @@ def home_page():
         upcoming_shows=upcoming_shows(),
     )
 
+    hero = site_metadata["og_image"]
+    manifest = image_manifest()
+
     return render_template(
         "base.jinja2",
         content=content,
         title="alexkaufman.live",
         page_class="home",
-        preload=build_preload_link(HOME_HERO_IMAGE, image_manifest()),
-        jsonld=home_schemas(hero_image_filename="alexkaufmancomedy-1724424682.jpg"),
+        preload=build_preload_link(hero, manifest),
+        jsonld=home_schemas(hero_image_url=og_image_url(hero, manifest)),
     )
 
 

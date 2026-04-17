@@ -37,7 +37,7 @@ def website_schema():
     }
 
 
-def person_schema(image_filename=None):
+def person_schema(image_url=None):
     """Person schema describing Alex. Belongs on the home page."""
     schema = {
         "@context": "https://schema.org",
@@ -47,10 +47,8 @@ def person_schema(image_filename=None):
         "url": SITE_URL,
         "sameAs": list(SOCIAL_URLS),
     }
-    if image_filename:
-        schema["image"] = url_for(
-            "static", filename=image_filename, _external=True
-        )
+    if image_url:
+        schema["image"] = image_url
     return schema
 
 
@@ -113,8 +111,8 @@ def event_schema(show, page_url=None):
 # --- Per-page schema lists --------------------------------------------
 
 
-def home_schemas(hero_image_filename=None):
-    return [website_schema(), person_schema(hero_image_filename)]
+def home_schemas(hero_image_url=None):
+    return [website_schema(), person_schema(hero_image_url)]
 
 
 def event_schemas(show, page_url=None):
