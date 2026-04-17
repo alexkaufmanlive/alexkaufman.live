@@ -44,8 +44,10 @@ A short blurb if you want one. Plain markdown.
 | `show_date` | yes | Must be `YYYY-MM-DD`. Leading zeros matter. |
 | `meta.venue` | no | Shown on the show page. |
 | `meta.city`, `meta.state` | no | Shown next to the date. |
-| `meta.show_time` | no | Free-form, e.g. `8:00pm`. |
+| `meta.country` | no | Two-letter country code. Defaults to `US`; set for international shows. |
+| `meta.show_time` | no | Free-form, e.g. `8:00pm`. When parseable, `endDate` in the Event schema is auto-set to show_time + 2h. |
 | `meta.event_link` | no | Powers the "Get Tickets" button. |
+| `meta.organizer` | no | Presenter name (e.g. `Don't Tell Comedy`, festival name). Adds an `organizer` to the Event schema. |
 | `meta.price` | no | Numeric ticket price (e.g. `15` or `15.00`). When set, Google can show "Tickets from $X" in Event rich results — worth adding whenever you know the number. |
 | `meta.price_currency` | no | ISO-4217 currency code, e.g. `USD`, `CAD`. Defaults to `USD`. |
 | `redirect` | no | If set, clicking the show goes straight to that URL — use for 3rd-party ticketing. |
