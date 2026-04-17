@@ -183,7 +183,6 @@ def render_page(content, **kwargs):
     markdown = mistune.create_markdown(
         renderer=renderer,
         plugins=[FencedDirective([Image()])],
-        escape=False,
     )
 
     # 1. Process Jinja template variables in the markdown
