@@ -6,8 +6,10 @@ from flask import (
     request,
 )
 
-from ..content import get_show, past_shows_page, upcoming_shows
+from .. import site_metadata
+from ..content import get_show, image_manifest, past_shows_page, upcoming_shows
 from ..services.jsonld import default_schemas, event_schemas
+from ..services.markdown import og_image_url
 
 bp = Blueprint("shows", __name__, url_prefix="/shows")
 
@@ -46,9 +48,12 @@ def show(show_slug):
         return redirect(show["redirect"], code=302)
 
     # Content is already rendered HTML at this point.
+    fallback_image = og_image_url(site_metadata["og_image"], image_manifest())
     return render_template(
         "show.jinja2",
-        jsonld=event_schemas(show, page_url=request.url),
+        jsonld=event_schemas(
+            show, page_url=request.url, fallback_image_url=fallback_image
+        ),
         page_class="shows",
         **show,
     )
