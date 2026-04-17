@@ -132,13 +132,17 @@ def build_preload_link(
 class ResponsiveImageRenderer(mistune.HTMLRenderer):
     """Renderer that rewrites local images to responsive <picture> tags."""
 
-    def __init__(self, manifest: dict):
+    def __init__(self, manifest: dict, hero_filename: str | None = None):
         # escape=False matches the existing behavior: site owner controls
         # all content so inline HTML (like <div class="gallery">) passes
         # through raw. Must be set on the renderer itself — passing escape
         # to create_markdown doesn't reach a pre-constructed renderer.
         super().__init__(escape=False)
         self.manifest = manifest
+        # When set, the matching image renders with loading="eager" so the
+        # LCP hero isn't deferred. Pairs with the rel=preload AVIF link in
+        # the <head> to cover browsers that don't support AVIF.
+        self.hero_filename = hero_filename
         # Precompute the prefix that identifies our auto-generated anchor
         # wrapping an image. Used by link() to detect and unwrap so the
         # user's explicit link target wins in [![alt](img)](href) syntax.
@@ -159,7 +163,10 @@ class ResponsiveImageRenderer(mistune.HTMLRenderer):
         # delegate to super().image() for local images, because its raw
         # URL pass-through would emit a relative src that 404s.
         filename = unquote(os.path.basename(url))
-        return render_responsive_picture(filename, self.manifest, alt=text or "")
+        loading = "eager" if filename == self.hero_filename else "lazy"
+        return render_responsive_picture(
+            filename, self.manifest, alt=text or "", loading=loading
+        )
 
     def link(self, text, url, title=None):
         # If the link's body is our auto-anchored image, swap the anchor
@@ -172,7 +179,7 @@ class ResponsiveImageRenderer(mistune.HTMLRenderer):
         return super().link(text, url, title)
 
 
-def render_page(content, **kwargs):
+def render_page(content, hero_filename=None, **kwargs):
     """
     Render markdown content as HTML with Jinja2 template processing.
 
@@ -186,6 +193,8 @@ def render_page(content, **kwargs):
 
     Args:
         content: Markdown content string (may contain Jinja template syntax)
+        hero_filename: Basename of the LCP image on the page; rendered with
+            loading="eager" instead of the default "lazy".
         **kwargs: Template variables to pass to Jinja2
 
     Returns:
@@ -195,7 +204,7 @@ def render_page(content, **kwargs):
     # (content.py imports render_page from this module).
     from ..content import image_manifest
 
-    renderer = ResponsiveImageRenderer(image_manifest())
+    renderer = ResponsiveImageRenderer(image_manifest(), hero_filename=hero_filename)
     markdown = mistune.create_markdown(
         renderer=renderer,
         plugins=[FencedDirective([Image()])],
