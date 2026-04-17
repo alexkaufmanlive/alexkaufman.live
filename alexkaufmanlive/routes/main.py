@@ -2,29 +2,28 @@
 
 import hashlib
 import hmac
-import pathlib
 import subprocess
 
-import frontmatter
 from flask import (
     Blueprint,
     current_app,
     jsonify,
     make_response,
+    redirect,
     render_template,
     request,
 )
-from flask.helpers import redirect
 
-from ..content import all_shows, image_manifest, upcoming_shows
+from .. import site_metadata
+from ..content import (
+    all_shows,
+    image_manifest,
+    render_markdown_page,
+    upcoming_shows,
+)
 from ..services.email import bonedry_optin, subscribe_to_buttondown
 from ..services.jsonld import default_schemas, home_schemas
-from ..services.markdown import build_preload_link, render_page
-
-# The hero image on the home page. Preloaded in <head> so the browser
-# starts fetching it before parsing the body — our LCP element.
-HOME_HERO_IMAGE = "alexkaufmancomedy-1724424682.jpg"
-
+from ..services.markdown import build_preload_link, og_image_url
 
 bp = Blueprint("main", __name__)
 
@@ -32,23 +31,21 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 def home_page():
     """Builds the home page of the site."""
-    home_path = pathlib.Path(current_app.root_path) / "content/home.md"
-
-    home = frontmatter.load(str(home_path))
-    content = render_page(
-        home.content,
-        upcoming_shows=upcoming_shows(),
-    )
+    hero = site_metadata["og_image"]
+    manifest = image_manifest()
 
     return render_template(
         "base.jinja2",
-        content=content,
+        content=render_markdown_page("home.md", upcoming_shows=upcoming_shows()),
         title="alexkaufman.live",
         og_title="Alex Kaufman | standup comic/former physicist",
         og_description="A former physicist who swapped science for standup comedy. Performing at clubs and festivals across the country.",
         page_class="home",
-        preload=build_preload_link(HOME_HERO_IMAGE, image_manifest()),
-        jsonld=home_schemas(hero_image_filename="alexkaufmancomedy-1724424682.jpg"),
+        preload=build_preload_link(hero, manifest),
+        jsonld=home_schemas(
+            hero_image_url=og_image_url(hero, manifest),
+            description=site_metadata["tagline"],
+        ),
     )
 
 
@@ -61,10 +58,7 @@ def sitemap():
     lastmod and priority tags omitted on static pages.
     lastmod included on dynamic content such as blog posts.
     """
-    from urllib.parse import urlparse
-
-    host_components = urlparse(request.host_url)
-    host_base = host_components.scheme + "://" + host_components.netloc
+    host_base = request.host_url.rstrip("/")
 
     urls = list()
     # Static routes with static content
@@ -93,15 +87,9 @@ def sitemap():
 @bp.route("/contact/")
 def contact_page():
     """Builds the contact page of the site."""
-    home_path = pathlib.Path(current_app.root_path) / "content/contact.md"
-
-    contactpage = frontmatter.load(str(home_path))
-
-    content = render_page(contactpage.content)
-
     return render_template(
         "base.jinja2",
-        content=content,
+        content=render_markdown_page("contact.md"),
         title="alexkaufman.live",
         page_class="home",
         jsonld=default_schemas(),

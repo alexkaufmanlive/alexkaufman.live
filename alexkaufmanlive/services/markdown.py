@@ -85,6 +85,22 @@ def render_responsive_picture(
     )
 
 
+def og_image_url(filename: str, manifest: dict) -> str:
+    """Absolute URL for the 1200px JPEG derivative of a hero image.
+
+    Used for <meta property="og:image"> and JSON-LD Person.image. Falls
+    back to the original in /static/originals/ if the derivative isn't
+    in the manifest (build script hasn't run yet), so social previews
+    keep working before the pipeline warms up.
+    """
+    info = manifest.get(filename)
+    if info is None:
+        return url_for("static", filename=f"originals/{filename}", _external=True)
+    return url_for(
+        "static", filename=f"images/{info['stem']}-1200.jpg", _external=True
+    )
+
+
 def build_preload_link(
     filename: str,
     manifest: dict,
@@ -183,7 +199,6 @@ def render_page(content, **kwargs):
     markdown = mistune.create_markdown(
         renderer=renderer,
         plugins=[FencedDirective([Image()])],
-        escape=False,
     )
 
     # 1. Process Jinja template variables in the markdown

@@ -17,6 +17,7 @@ import pathlib
 from datetime import date, datetime
 
 import frontmatter
+from flask import current_app
 
 from .services.markdown import render_page
 
@@ -56,13 +57,13 @@ def load_shows(app):
     show_files = sorted(shows_path.glob("**/*.md"))
 
     by_link: dict[str, dict] = {}
+    errors: list[tuple[pathlib.Path, list[str]]] = []
 
     with app.test_request_context():
         for show_file in show_files:
-            try:
-                show = _load_one_show(show_file)
-            except Exception as e:
-                app.logger.error(f"failed to load show {show_file.name}: {e}")
+            file_errors, show = _load_show(show_file)
+            if file_errors:
+                errors.append((show_file, file_errors))
                 continue
 
             link = show["link"]
@@ -72,18 +73,73 @@ def load_shows(app):
                 )
             by_link[link] = show
 
+    if errors:
+        raise RuntimeError(_format_load_errors(errors))
+
     _shows_by_link = by_link
     _shows_sorted = sorted(by_link.values(), key=lambda s: s["show_date"])
     app.logger.info(f"loaded {len(_shows_sorted)} shows")
 
 
-def _load_one_show(show_file: pathlib.Path) -> dict:
-    post = frontmatter.load(str(show_file))
-    data = post.to_dict()
+def _load_show(show_file: pathlib.Path) -> tuple[list[str], dict | None]:
+    """Validate and build a show. Returns (errors, show_dict_or_None).
 
+    On any validation error the show is not built — bail loud at startup
+    rather than serve a broken page.
+    """
+    try:
+        post = frontmatter.load(str(show_file))
+    except Exception as e:
+        return [f"could not parse frontmatter: {e}"], None
+
+    data = post.to_dict()
+    file_errors = _validate_show_data(data, show_file)
+    if file_errors:
+        return file_errors, None
+
+    return [], _build_show(post, data, show_file)
+
+
+def _validate_show_data(data: dict, show_file: pathlib.Path) -> list[str]:
+    errors: list[str] = []
+
+    title = data.get("title")
+    if not isinstance(title, str) or not title.strip():
+        errors.append("missing required field: title")
+
+    raw_date = data.get("show_date")
+    if raw_date is None:
+        errors.append("missing required field: show_date")
+    else:
+        show_date = _try_coerce_date(raw_date)
+        if show_date is None:
+            errors.append(
+                f"show_date {raw_date!r} is not a valid date "
+                f"(use YYYY-MM-DD, e.g. 2026-05-15)"
+            )
+        else:
+            prefix = show_file.stem[:10]
+            filename_date = _try_coerce_date(prefix)
+            if filename_date is not None and filename_date != show_date:
+                errors.append(
+                    f"filename date prefix {prefix!r} does not match "
+                    f"show_date {show_date.isoformat()!r}"
+                )
+
+    meta = data.get("meta")
+    if meta is not None and not isinstance(meta, dict):
+        errors.append(
+            f"meta must be a key-value mapping (got {type(meta).__name__}); "
+            f"check YAML indentation"
+        )
+
+    return errors
+
+
+def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
     link = data.get("link") or show_file.stem
-    title = data.get("title") or ""
-    show_date = _coerce_date(data.get("show_date"))
+    title = data["title"]
+    show_date = _coerce_date(data["show_date"])
     redirect_url = data.get("redirect")
     image = data.get("image")
     meta = data.get("meta") or {}
@@ -124,6 +180,28 @@ def _coerce_date(value) -> date:
     raise ValueError(f"invalid show_date: {value!r}")
 
 
+def _try_coerce_date(value) -> date | None:
+    try:
+        return _coerce_date(value)
+    except (ValueError, TypeError):
+        return None
+
+
+def _format_load_errors(
+    errors: list[tuple[pathlib.Path, list[str]]],
+) -> str:
+    n = len(errors)
+    word = "file" if n == 1 else "files"
+    lines = [f"Failed to load {n} show {word}:", ""]
+    for show_file, file_errors in errors:
+        rel = pathlib.Path("content/shows") / show_file.name
+        lines.append(f"  {rel}")
+        for err in file_errors:
+            lines.append(f"    - {err}")
+        lines.append("")
+    return "\n".join(lines)
+
+
 # --- Public accessors --------------------------------------------------
 
 
@@ -146,6 +224,18 @@ def upcoming_shows(today: date | None = None) -> list[dict]:
 def image_manifest() -> dict[str, dict]:
     """Manifest of image derivatives, keyed by original filename."""
     return _image_manifest
+
+
+def render_markdown_page(filename: str, **kwargs) -> str:
+    """Render a markdown page in content/ with Jinja kwargs.
+
+    Shows are pre-rendered at startup; home/contact are rendered per
+    request because they accept dynamic kwargs (e.g. upcoming_shows)
+    and the cost of one frontmatter.load + render is negligible.
+    """
+    path = pathlib.Path(current_app.root_path) / "content" / filename
+    post = frontmatter.load(str(path))
+    return render_page(post.content, **kwargs)
 
 
 def past_shows_page(

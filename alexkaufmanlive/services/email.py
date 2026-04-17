@@ -80,10 +80,10 @@ def bonedry_optin(id, api_token):
             json={"tags": ["Bone Dry Comedy", "optin"]},
         )
 
-        if response.status_code == 201:
-            return True, "Successfully subscribed!", 201
+        if response.ok:
+            return True, "Successfully subscribed!", response.status_code
         else:
-            return False, "Failed to subscribe", 400
+            return False, "Failed to subscribe", response.status_code
 
     except requests.RequestException:
         return False, "Network error occurred", 500
