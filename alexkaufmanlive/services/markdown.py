@@ -85,6 +85,31 @@ def render_responsive_picture(
     )
 
 
+GALLERY_SIZES = "(max-width: 600px) 170px, 360px"
+
+
+def render_gallery(items: list[tuple[str, str]], manifest: dict) -> Markup:
+    """Render the 3-up photo gallery on the home page.
+
+    Wraps each image in a `.gallery_img.gallery_item-N` div (the grid
+    template positions them: item 1 tall-left, 2 top-right, 3 bottom-
+    right) and overrides the default srcset `sizes` so mobile browsers
+    pick the 400w derivative for the ~170px columns instead of the 1200w
+    one meant for full-width content.
+    """
+    parts = ['<div class="gallery">']
+    for i, (filename, alt) in enumerate(items, start=1):
+        parts.append(f'<div class="gallery_img gallery_item-{i}">')
+        parts.append(
+            render_responsive_picture(
+                filename, manifest, alt=alt, sizes=GALLERY_SIZES
+            )
+        )
+        parts.append("</div>")
+    parts.append("</div>")
+    return Markup("".join(parts))
+
+
 def og_image_url(filename: str, manifest: dict) -> str:
     """Absolute URL for the 1200px JPEG derivative of a hero image.
 
