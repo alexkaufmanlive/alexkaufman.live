@@ -56,13 +56,13 @@ def create_app():
         # Lazy imports to avoid loading content/services at module import
         # time — keeps __init__.py a thin factory.
         from .content import image_manifest
-        from .services.markdown import og_image_url, render_gallery
+        from .services.markdown import og_image_url
 
-        manifest = image_manifest()
         return {
             **site_metadata,
-            "og_image_url": og_image_url(site_metadata["og_image"], manifest),
-            "gallery": lambda items: render_gallery(items, manifest),
+            "og_image_url": og_image_url(
+                site_metadata["og_image"], image_manifest()
+            ),
         }
 
     @app.context_processor

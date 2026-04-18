@@ -54,8 +54,24 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 
 # Photos
 
-{{ gallery([
-    ("alexkaufmancomedy-1724385868.jpg", "Alex Kaufman mic shot."),
-    ("alexkaufmancomedy-1724385732.jpg", "Alex Kaufman black and white."),
-    ("alexkaufmancomedy-1724385803.jpg", "Alex Kaufman in color."),
-]) }}
+<div class="gallery">
+
+<div class="gallery_img gallery_item-1">
+
+![Alex Kaufman mic shot.](alexkaufmancomedy-1724385868.jpg)
+
+</div>
+
+<div class="gallery_img gallery_item-2">
+
+![Alex Kaufman black and white.](alexkaufmancomedy-1724385732.jpg)
+
+</div>
+
+<div class="gallery_img gallery_item-3">
+
+![Alex Kaufman in color.](alexkaufmancomedy-1724385803.jpg)
+
+</div>
+
+</div>
