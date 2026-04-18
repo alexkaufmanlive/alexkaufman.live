@@ -49,10 +49,10 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/favicon-180.png') }}">
-    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32.png') }}?v=2">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16.png') }}?v=2">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/favicon-180.png') }}?v=2">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='icons/favicon.ico') }}?v=2">
     {% block jsonld -%}
     {%- for schema in (jsonld or []) %}
     <script type="application/ld+json">{{ schema | tojson }}</script>
