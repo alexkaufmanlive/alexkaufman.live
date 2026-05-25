@@ -140,6 +140,7 @@ def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
     link = data.get("link") or show_file.stem
     title = data["title"]
     show_date = _coerce_date(data["show_date"])
+    end_date = _try_coerce_date(data["end_date"]) if "end_date" in data else None
     redirect_url = data.get("redirect")
     image = data.get("image")
     meta = data.get("meta") or {}
@@ -151,6 +152,7 @@ def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
             post.content,
             title=title,
             show_date=show_date,
+            end_date=end_date,
             link=link,
             meta=meta,
             image=image,
@@ -163,6 +165,7 @@ def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
         "link": link,
         "title": title,
         "show_date": show_date,
+        "end_date": end_date,
         "content": content_html,
         "redirect": redirect_url,
         "image": image,

@@ -31,7 +31,7 @@
                     {{ meta.state }}
                 {% endif %}
             </div>
-            <time class='show-date'>{{ show_date }}</time>
+            <time class='show-date'>{{ show_date | displaydate(end_date) }}</time>
         </div>
     </div>
 

@@ -22,7 +22,7 @@
                 {{ show["meta"]["city"] }}, {{ show["meta"]["state"]}}
             {%- endif -%}
             </div>
-            <time class="show-date">{{ show["show_date"] }}</time>
+            <time class="show-date">{{ show["show_date"] | displaydate(show.get("end_date")) }}</time>
         </div>
     </article>
     </li>
