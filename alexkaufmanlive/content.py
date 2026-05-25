@@ -74,7 +74,7 @@ def load_shows(app):
             by_link[link] = show
 
     if errors:
-        raise RuntimeError(_format_load_errors(errors))
+        app.logger.error(_format_load_errors(errors))
 
     _shows_by_link = by_link
     _shows_sorted = sorted(by_link.values(), key=lambda s: s["show_date"])
