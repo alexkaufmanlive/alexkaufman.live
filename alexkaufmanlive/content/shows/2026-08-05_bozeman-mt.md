@@ -9,7 +9,7 @@ meta:
   state: MT
   show_time: 8:30pm
   event_link: https://www.eventbrite.com/e/comedy-nights-at-the-1889-barn-bar-tickets-1989438769915
-  eventbrite_id: 1989438769915
+  eventbrite_id: 1989438931398
 ---
 
 {{ eventbrite_button(meta.eventbrite_id) }}
