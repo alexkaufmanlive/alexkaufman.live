@@ -4,9 +4,9 @@
 
 # Upcoming Shows
 
-{{ show_list(upcoming_shows) }}
+{{ parts.show_list(upcoming_shows) }}
 
-{{ email_list_cta() }}
+{{ parts.email_list_cta() }}
 
 # About
 

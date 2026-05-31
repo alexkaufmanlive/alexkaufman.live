@@ -33,7 +33,7 @@ Stay up to date with upcoming shows and new content:
 </div>
 </div>
 
-{{ email_list_cta() }}
+{{ parts.email_list_cta() }}
 
 ## Press & Media
 

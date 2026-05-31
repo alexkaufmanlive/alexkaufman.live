@@ -11,7 +11,7 @@ meta:
   eventbrite_id: 1313235616079
 ---
 
-{{ eventbrite_button(meta.eventbrite_id) }}
+{{ parts.eventbrite_button() }}
 
 I will be performing on September 9th at the 2025
 [North Carolina Comedy Festival](https://www.facebook.com/share/1C3hRHRF4N/)!

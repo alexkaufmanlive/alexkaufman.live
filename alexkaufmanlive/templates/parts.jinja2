@@ -30,7 +30,7 @@
 </ul>
 {%- endmacro %}
 
-{% macro eventbrite_button(event_id) -%}
+{% macro eventbrite_button() -%}
 <button id="event-button" type="button">buy tickets</button>
 
 <script src="https://www.eventbrite.com/static/widgets/eb_widgets.js"></script>
@@ -42,7 +42,7 @@
 
     window.EBWidgets.createWidget({
         widgetType: 'checkout',
-        eventId: '{{event_id}}',
+        eventId: '{{ meta.eventbrite_id }}',
         modal: true,
         modalTriggerElementId: 'event-button',
         onOrderComplete: exampleCallback,

@@ -210,7 +210,13 @@ def render_page(content, hero_filename=None, **kwargs):
         plugins=[FencedDirective([Image()])],
     )
 
-    # 1. Process Jinja template variables in the markdown
-    templated_content = render_template_string(content, **kwargs)
+    # 1. Process Jinja template variables in the markdown. Prepend an
+    # import of parts.jinja2 with the calling context so macros like
+    # `parts.eventbrite_button()` can read `meta` directly without each
+    # author having to pass meta.eventbrite_id at every call site.
+    templated_content = render_template_string(
+        '{%- import "parts.jinja2" as parts with context -%}\n' + content,
+        **kwargs,
+    )
     # 2. Convert markdown to HTML
     return markdown(templated_content)

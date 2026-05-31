@@ -8,7 +8,7 @@ meta:
   event_link: https://www.donttellcomedy.com/shows/binghamton-ny-08-23-25/
 ---
 
-{{ event_button(meta.event_link) }}
+{{ parts.event_button(meta.event_link) }}
 
 Binghamton, NY
 

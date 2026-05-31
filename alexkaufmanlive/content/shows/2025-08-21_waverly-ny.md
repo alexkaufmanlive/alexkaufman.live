@@ -11,4 +11,4 @@ meta:
   eventbrite_id: 1520508735559
 ---
 
-{{ eventbrite_button(meta.eventbrite_id) }}
+{{ parts.eventbrite_button() }}

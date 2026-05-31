@@ -4,7 +4,6 @@ import os
 
 from flask import (
     Flask,
-    get_template_attribute,
     render_template,
     url_for,
 )
@@ -77,16 +76,6 @@ def create_app():
             "og_image_url": og_image_url(
                 site_metadata["og_image"], image_manifest()
             ),
-        }
-
-    @app.context_processor
-    def inject_parts():
-        return {
-            "show_list": get_template_attribute("parts.jinja2", "show_list"),
-            "email_list_cta": get_template_attribute("parts.jinja2", "email_list_cta"),
-            "event_button": get_template_attribute("parts.jinja2", "event_button"),
-            "eventbrite_button": get_template_attribute("parts.jinja2", "eventbrite_button"),
-            "tickettailor_button": get_template_attribute("parts.jinja2", "tickettailor_button"),
         }
 
     # Preload hint for the stylesheet via Link response header. Browsers

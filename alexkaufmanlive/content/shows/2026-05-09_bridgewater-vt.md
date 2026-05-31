@@ -7,7 +7,7 @@ meta:
   event_link: https://www.eventbrite.com/e/stand-up-comedy-at-woolen-mill-comedy-club-tickets-1988718095358
 ---
 
-{{ event_button(meta.event_link) }}
+{{ parts.event_button(meta.event_link) }}
 
 Vermont's longest operating comedy club is proud to present stand up comedy every Saturday night at 8pm!
 

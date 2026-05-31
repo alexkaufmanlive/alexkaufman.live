@@ -11,7 +11,7 @@ meta:
   eventbrite_id: 567396166207
 ---
 
-{{ eventbrite_button(meta.eventbrite_id) }}
+{{ parts.eventbrite_button() }}
 
 Big Wave Comedy show is every Tuesday night at one of the East Village's best bars, Ten Degrees, located on lively St. Marks Place. Lineups each week featuring stand up comedians from HBO, Comedy Central, MTV, Netflix, and popular late night shows such as Fallon, Colbert, and beyond.
 Every ticket no only gets you into a great show but also unlocks amazing weekly drink specials!

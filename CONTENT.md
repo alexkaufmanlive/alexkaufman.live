@@ -62,9 +62,11 @@ A short blurb if you want one. Plain markdown.
   `content/static/originals/`. See
   [2026-04-04_asheville-nc.md](alexkaufmanlive/content/shows/2026-04-04_asheville-nc.md).
 - **Eventbrite / TicketTailor button**: use the macros
-  `eventbrite_button(url)` or `tickettailor_button(url)` in the
-  body. See [parts.jinja2](alexkaufmanlive/templates/parts.jinja2)
-  for the full list.
+  `parts.eventbrite_button()` or `tickettailor_button(url)` in
+  the body. `parts.eventbrite_button()` reads
+  `meta.eventbrite_id` automatically. See
+  [parts.jinja2](alexkaufmanlive/templates/parts.jinja2) for the
+  full list.
 
 ### What gets validated
 

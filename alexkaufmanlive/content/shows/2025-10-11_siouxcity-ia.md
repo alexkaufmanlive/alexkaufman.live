@@ -10,7 +10,7 @@ meta:
   event_link: https://www.comedyticketing.com/events/comedy-night-at-eddie-s-tavern-with-alex-kaufman-tickets-mlKZcY6SvqPf3bkhHqCH
 ---
 
-{{ event_button(meta.event_link) }}
+{{ parts.event_button(meta.event_link) }}
 
 ## Critial Information
 

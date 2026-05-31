@@ -7,7 +7,7 @@ meta:
   event_link: https://www.facebook.com/events/1091379442825956
 ---
 
-{{ event_button(meta.event_link) }}
+{{ parts.event_button(meta.event_link) }}
 
 Annual birthday show at Spanky's Dive bar in Springfield, Vermont for Spanky Payne and Allan Reardon.
 

@@ -12,7 +12,7 @@ meta:
   eventbrite_id: 1989438931398
 ---
 
-{{ eventbrite_button(meta.eventbrite_id) }}
+{{ parts.eventbrite_button() }}
 
 When purchasing tickets, make sure to select the **8:30pm show**.
 

@@ -11,7 +11,7 @@ meta:
   eventbrite_id: 938456146597
 ---
 
-{{ eventbrite_button(meta.eventbrite_id) }}
+{{ parts.eventbrite_button() }}
 
 Bushwick's longest-running Stand Up Comedy showcase.
 

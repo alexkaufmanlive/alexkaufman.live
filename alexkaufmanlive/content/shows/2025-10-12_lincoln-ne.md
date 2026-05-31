@@ -6,7 +6,7 @@ meta:
   state: NE
 ---
 
-{{ email_list_cta(tags=["Omaha"]) }}
+{{ parts.email_list_cta(tags=["Omaha"]) }}
 
 More details to come soon. Sign up to my email list to be reminded about this show.
 

@@ -9,7 +9,7 @@ meta:
   event_link: https://www.donttellcomedy.com/shows/missoula-18175/
 ---
 
-{{ event_button(meta.event_link) }}
+{{ parts.event_button(meta.event_link) }}
 
 {{ meta.city }}, {{ meta.state }}
 

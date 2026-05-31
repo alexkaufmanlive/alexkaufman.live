@@ -8,7 +8,7 @@ meta:
   event_link: https://www.donttellcomedy.com/shows/syracuse-14486/
 ---
 
-{{ event_button(meta.event_link) }}
+{{ parts.event_button(meta.event_link) }}
 
 Syracuse, NY
 
