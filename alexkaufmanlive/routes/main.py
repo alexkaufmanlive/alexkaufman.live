@@ -3,6 +3,7 @@
 import hashlib
 import hmac
 import pathlib
+import re
 import subprocess
 
 from flask import (
@@ -13,6 +14,7 @@ from flask import (
     redirect,
     render_template,
     request,
+    url_for,
 )
 
 from .. import site_metadata
@@ -125,13 +127,16 @@ def _epk_cache_dir() -> pathlib.Path:
 def _epk_cache_inputs() -> list[pathlib.Path]:
     """Files whose contents determine the rendered EPK PDF.
 
-    Changing either invalidates the cache. `home.md` is the body
-    content; `epk.jinja2` is the print-specific template/CSS.
+    Changing any invalidates the cache. `home.md` is the body content;
+    `epk.jinja2` is the print-specific template/CSS; this module holds the
+    render logic that turns the website HTML into the press kit (which
+    sections it drops, where it splits pages), so its source counts too.
     """
     root = pathlib.Path(current_app.root_path)
     return [
         root / "content" / "home.md",
         root / "templates" / "epk.jinja2",
+        pathlib.Path(__file__),
     ]
 
 
@@ -169,20 +174,56 @@ def _write_epk_cache(cache_path: pathlib.Path, pdf_bytes: bytes) -> None:
         current_app.logger.warning("EPK cache write failed: %s", exc)
 
 
+def _strip_h1_section(html: str, heading: str, next_heading: str) -> str:
+    """Remove a whole `<h1>` section from rendered HTML.
+
+    Slices out everything from `<h1>{heading}</h1>` up to (but not
+    including) the following `<h1>{next_heading}</h1>`. Used by the EPK
+    renderer to drop website-only sections without `home.md` needing to
+    know which output it's being rendered for.
+
+    No-op if either anchor is missing or out of order, so a content edit
+    degrades to "section kept" rather than a corrupted render.
+    """
+    start_tag = f"<h1>{heading}</h1>"
+    end_tag = f"<h1>{next_heading}</h1>"
+    start = html.find(start_tag)
+    end = html.find(end_tag)
+    if start == -1 or end == -1 or end < start:
+        return html
+    return html[:start] + html[end:]
+
+
 def _render_epk_pdf() -> bytes:
     """Render the EPK to PDF bytes (the expensive, uncached operation).
 
-    The body content is the same `home.md` as the home page, rendered
-    with `is_epk=True` so it skips the Upcoming Shows + email CTA and
-    inserts a page break after Social Media. The EPK template wraps
-    that content with print-specific CSS (frame, page header/footer).
+    The body content is the same `home.md` as the home page. `home.md`
+    is a single, declarative source with no print-specific branching;
+    every difference between the website and the press kit is applied
+    here, by transforming the rendered HTML: dropping the website-only
+    Upcoming Shows section and bio paragraph, recoloring inline icons,
+    stripping click-to-fullsize anchors, and splitting the body across
+    two pages. The EPK template then wraps the two halves with
+    print-specific CSS (frame, page header/footer).
     """
     static_dir = pathlib.Path(current_app.static_folder).resolve()
 
-    body_html = render_markdown_page(
-        "home.md",
-        is_epk=True,
-        upcoming_shows=[],
+    body_html = render_markdown_page("home.md", upcoming_shows=[])
+
+    # The website's Upcoming Shows section (heading, show list, and email
+    # signup CTA with its modal/script) is irrelevant to a press kit, so
+    # drop the whole section: everything from its <h1> up to the next one.
+    body_html = _strip_h1_section(body_html, "Upcoming Shows", "About")
+
+    # The bio closes with a paragraph about Alex's producing work (Bone
+    # Dry Comedy); the press kit omits it to keep About to one page.
+    # Anchored on the paragraph's opening words so an edit elsewhere in
+    # the bio can't strip the wrong one — a no-match keeps the paragraph.
+    body_html = re.sub(
+        r"<p>During undergrad\b.*?</p>\s*",
+        "",
+        body_html,
+        flags=re.DOTALL,
     )
 
     # WeasyPrint doesn't resolve SVG `currentColor` through the outer
@@ -192,22 +233,44 @@ def _render_epk_pdf() -> bytes:
     # the source SVGs (and the website) stay untouched.
     body_html = body_html.replace('fill="currentColor"', 'fill="#fff7eb"')
 
-    # Split on the marker home.md emits between Social Media and Clips
-    # when is_epk. Each half is rendered into its own <main> box with
-    # its own border — far more reliable than trying to make a single
-    # border element span pages via box-decoration-break or fixed
-    # positioning.
-    page_break_marker = '<div class="epk-page-break"></div>'
-    if page_break_marker in body_html:
-        content_top, content_bottom = body_html.split(page_break_marker, 1)
+    # Break across two pages before the Social Media section, so page 1
+    # holds the hero/About/Clips and page 2 holds Social/Press/Photos.
+    # Each half is rendered into its own <main> box with its own border —
+    # far more reliable than trying to make a single border element span
+    # pages via box-decoration-break or fixed positioning. If the heading
+    # ever goes missing, everything stays on page 1 rather than breaking.
+    social_heading = "<h1>Social Media</h1>"
+    split = body_html.find(social_heading)
+    if split != -1:
+        content_top, content_bottom = body_html[:split], body_html[split:]
     else:
         content_top, content_bottom = body_html, ""
+
+    # The hero photo is painted as the linked <a>'s CSS background (see
+    # epk.jinja2) instead of an <img>. WeasyPrint emits a PDF link
+    # rectangle for every box inside a link, and the hero <img> carries a
+    # transform: scale(2) crop — which inflated that rectangle to 2x the
+    # visible photo, leaving a clickable region spilling past the image.
+    # Painting the photo as a background keeps a single link rect that
+    # matches the displayed image. Pass the derivative URL so the template
+    # need not know the hero's filename.
+    hero = site_metadata["og_image"]
+    hero_info = image_manifest().get(hero)
+    hero_bg_url = url_for(
+        "static",
+        filename=(
+            f"images/{hero_info['stem']}-1200.jpg"
+            if hero_info
+            else f"originals/{hero}"
+        ),
+    )
 
     html = render_template(
         "epk.jinja2",
         content_top=content_top,
         content_bottom=content_bottom,
         font_space=(static_dir / "fonts/space-grotesk-latin.woff2").as_uri(),
+        hero_bg_url=hero_bg_url,
     )
 
     return render_pdf(

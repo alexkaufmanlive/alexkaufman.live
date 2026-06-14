@@ -105,28 +105,34 @@
 
         /* Hero image on page 1.
            Markdown renders the image as <p><a><picture><img></picture></a></p>.
-           Force every level of that nesting to fill the box, then use
-           object-fit + object-position to crop/zoom on the face. */
+           The photo is painted as the <a>'s background (cropped/zoomed on
+           the face via background-size + background-position) rather than
+           shown through the <img>. WeasyPrint emits a PDF link rectangle
+           for every box inside a link; the <img> previously carried a
+           transform: scale(2) zoom, which inflated that rectangle to 2x
+           the visible photo, leaving a clickable region that spilled well
+           past the image. A background draws no box, so the only link rect
+           is the <a> itself — matching the displayed image exactly. The
+           <picture>/<img> stay in the markup (hidden) only to carry the
+           link's href, so clicking still opens the full-size original. */
         main:first-of-type > p:first-of-type {
             width: 100%;
             height: 2.6in;
             overflow: hidden;
             margin: 0 0 0.25in 0;
         }
-        main:first-of-type > p:first-of-type a,
-        main:first-of-type > p:first-of-type picture {
+        main:first-of-type > p:first-of-type a {
             display: block;
             width: 100%;
             height: 100%;
+            background-image: url('{{ hero_bg_url }}');
+            background-size: 200%;
+            background-position: 30% 33%;
+            background-repeat: no-repeat;
         }
+        main:first-of-type > p:first-of-type picture,
         main:first-of-type > p:first-of-type img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: 30% 33%;
-            display: block;
-            transform: scale(2);
-            transform-origin: 30% 33%;
+            display: none;
         }
 
         /* The "**tagline**" line right after the hero — duplicates the
