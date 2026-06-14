@@ -156,6 +156,26 @@
         .gallery_img picture { display: block; width: 100%; height: 100%; }
         .gallery_img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+        /* Clip thumbnails on page 1 — two 16:9 stills side by side,
+           each linking to the video. The markdown image renderer emits
+           <p><a><picture><img></picture></a></p> per clip, so the two
+           <p> children become the flex columns. Height is capped so the
+           whole Clips block fits under About and the EPK stays 2 pages. */
+        .video-clips {
+            display: flex;
+            gap: 0.2in;
+            margin: 0.05in 0 0 0;
+        }
+        .video-clips p { margin: 0; }
+        .video-clips a,
+        .video-clips picture { display: block; }
+        .video-clips img {
+            height: 1.95in;
+            width: auto;
+            display: block;
+            border: 1pt solid var(--accent);
+        }
+
         /* Social media row — horizontal, centered, larger.
            Icons are inline SVGs with paths that inherit fill from
            `fill="currentColor"`. Forcing color on every level
