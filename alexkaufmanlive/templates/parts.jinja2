@@ -30,46 +30,24 @@
 </ul>
 {%- endmacro %}
 
-{#- Embedded video clips. `youtube`/`vimeo` each take just a share URL,
-    an optional title, and an optional `thumb`; they parse the video id
-    (and Vimeo privacy hash) out of the URL themselves. On the website a
-    clip renders as a responsive 16:9 iframe whose player shows its own
-    poster thumbnail before play, so `thumb` is ignored there. In the EPK
-    PDF (is_epk) iframes can't render, so it shows `thumb` as a clickable
-    thumbnail (a local image in static/originals/, run through the same
-    responsive <picture> pipeline as the photos) linking to the video —
-    or, if no thumb is given, a plain text link. Wrap the calls in a
-    <div class="video-clips"> in the markdown to lay them side by side.
+{#- Video clip — a clickable thumbnail that links out to the video.
+    `thumb` is a local image in static/originals/; it runs through the
+    same responsive <picture> pipeline as the photos. Renders identically
+    on the website and in the EPK PDF (the only difference is CSS). Wrap
+    the calls in a <div class="video-clips"> in the markdown to lay them
+    side by side.
 
-    Accepted URL forms:
-      youtube  https://youtu.be/<id>  |  https://www.youtube.com/watch?v=<id>
-      vimeo    https://vimeo.com/<id>  |  https://vimeo.com/<id>/<hash>
+    Output mirrors the photo-gallery markup: a <figure> with blank lines
+    around the markdown image so the renderer rewrites it into a linked
+    responsive <picture>, plus a <figcaption> for the title. -#}
+{% macro clip(url, title, thumb) -%}
+<figure class="video-clip">
 
-    On the website each macro's output is one contiguous HTML block (no
-    blank lines) so mistune treats it as raw HTML and passes it through
-    untouched. The EPK thumb branch instead emits markdown image syntax
-    so the renderer rewrites it into a responsive <picture>. -#}
-{%- macro _video_figure(embed_src, url, title, thumb) -%}
-{%- if is_epk -%}
-{%- if thumb -%}
 [![{{ title }}]({{ thumb }})]({{ url }})
-{%- else -%}
-<p><a href="{{ url }}">{{ title }}</a></p>
-{%- endif -%}
-{%- else -%}
-<figure class="video-clip"><div class="video-embed"><iframe src="{{ embed_src }}" title="{{ title }}" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><figcaption>{{ title }}</figcaption></figure>
-{%- endif -%}
-{%- endmacro -%}
 
-{% macro youtube(url, title="", thumb="") -%}
-{%- set vid = url.split("youtu.be/")[1].split("?")[0] if "youtu.be/" in url else url.split("v=")[1].split("&")[0] -%}
-{{- _video_figure("https://www.youtube-nocookie.com/embed/" ~ vid, url, title, thumb) -}}
-{%- endmacro %}
+<figcaption>{{ title }}</figcaption>
 
-{% macro vimeo(url, title="", thumb="") -%}
-{%- set segs = url.split("vimeo.com/")[1].split("?")[0].split("/") -%}
-{%- set src = "https://player.vimeo.com/video/" ~ segs[0] ~ ("?h=" ~ segs[1] if segs|length > 1 else "") -%}
-{{- _video_figure(src, url, title, thumb) -}}
+</figure>
 {%- endmacro %}
 
 {% macro eventbrite_button() -%}

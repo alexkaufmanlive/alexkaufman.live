@@ -258,9 +258,9 @@ main h1 {
     margin-top: 0;
 }
 
-/* Embedded video clips — side by side on desktop, stacked on mobile.
-   Each .video-embed reserves a 16:9 box so the page doesn't reflow
-   while the iframe loads, and the iframe fills it. */
+/* Video clips — clickable thumbnails linking out to the videos. Side
+   by side on desktop, stacked on mobile. Each clip is a <figure> with a
+   responsive <picture> thumbnail and a caption. */
 .video-clips {
     display: flex;
     gap: 1rem;
@@ -273,15 +273,18 @@ main h1 {
     margin: 0;
 }
 
-.video-embed {
-    aspect-ratio: 16 / 9;
-    background-color: #000;
+.video-clip p {
+    margin: 0;
 }
 
-.video-embed iframe {
+.video-clip a,
+.video-clip picture {
+    display: block;
+}
+
+.video-clip img {
     width: 100%;
-    height: 100%;
-    border: 0;
+    height: auto;
     display: block;
 }
 

@@ -157,23 +157,33 @@
         .gallery_img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         /* Clip thumbnails on page 1 — two 16:9 stills side by side,
-           each linking to the video. The markdown image renderer emits
-           <p><a><picture><img></picture></a></p> per clip, so the two
-           <p> children become the flex columns. Height is capped so the
-           whole Clips block fits under About and the EPK stays 2 pages. */
+           each a <figure> linking to the video. The two figures share
+           the row equally (flex: 1) so the block spans the full content
+           width and the right edge lines up with the hero/text. */
         .video-clips {
             display: flex;
-            gap: 0.2in;
+            gap: 0.3in;
             margin: 0.05in 0 0 0;
         }
-        .video-clips p { margin: 0; }
-        .video-clips a,
-        .video-clips picture { display: block; }
-        .video-clips img {
-            height: 1.95in;
-            width: auto;
+        .video-clip {
+            flex: 1 1 0;
+            min-width: 0;
+            margin: 0;
+        }
+        .video-clip p { margin: 0; }
+        .video-clip a,
+        .video-clip picture { display: block; }
+        .video-clip img {
+            width: 100%;
+            height: auto;
             display: block;
             border: 1pt solid var(--accent);
+        }
+        .video-clip figcaption {
+            margin-top: 0.06in;
+            text-align: center;
+            color: var(--text);
+            font-size: 10pt;
         }
 
         /* Social media row — horizontal, centered, larger.

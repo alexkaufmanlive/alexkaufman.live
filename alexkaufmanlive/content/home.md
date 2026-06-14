@@ -29,9 +29,9 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 
 <div class="video-clips">
 
-{{ parts.youtube("https://youtu.be/AVh3TF2xn3Q", "5 Minute Set", thumb="clip-5min.jpg") }}
+{{ parts.clip("https://youtu.be/AVh3TF2xn3Q", "5 Minute Set", "clip-5min.jpg") }}
 
-{{ parts.vimeo("https://vimeo.com/975990959/a71d4f4aec", "25 Minute Set", thumb="clip-25min.jpg") }}
+{{ parts.clip("https://vimeo.com/975990959/a71d4f4aec", "25 Minute Set", "clip-25min.jpg") }}
 
 </div>
 
