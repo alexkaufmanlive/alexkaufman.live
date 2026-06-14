@@ -133,21 +133,28 @@
            running header, so hide it. */
         main:first-of-type > p:nth-of-type(2) { display: none; }
 
-        /* Photo gallery on page 2 — leftmost photo spans both rows. */
+        /* Photo gallery on page 2 — leftmost photo spans the full
+           height, the other two stack beside it. The website renders
+           this same markup with CSS grid (see style.css), but
+           WeasyPrint's grid engine crashes on a row-spanning item
+           (AttributeError: position_x), so the PDF uses flex column-wrap
+           instead: a fixed-height column container forces item-1 (full
+           height) into the first column and items 2+3 to wrap into the
+           second. Heights must stay in sync — 2*2.15in + 0.12in gap. */
         .gallery {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 2.15in 2.15in;
+            display: flex;
+            flex-flow: column wrap;
+            height: 4.42in;
             gap: 0.12in;
+            align-content: space-between;
             margin-top: 0.05in;
         }
-        .gallery_img { overflow: hidden; }
-        .gallery_item-1 { grid-column: 1; grid-row: 1 / span 2; }
-        .gallery_item-2 { grid-column: 2; grid-row: 1; }
-        .gallery_item-3 { grid-column: 2; grid-row: 2; }
-        .gallery_img img,
-        .gallery_img picture { width: 100%; height: 100%; display: block; }
-        .gallery_img img { object-fit: cover; }
+        .gallery_img { overflow: hidden; width: calc(50% - 0.06in); }
+        .gallery_item-1 { height: 4.42in; }
+        .gallery_item-2, .gallery_item-3 { height: 2.15in; }
+        .gallery_img a,
+        .gallery_img picture { display: block; width: 100%; height: 100%; }
+        .gallery_img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         /* Social media row — horizontal, centered, larger.
            Icons are inline SVGs with paths that inherit fill from

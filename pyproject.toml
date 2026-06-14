@@ -13,7 +13,7 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "Pillow>=10.0.0",
     "pillow-avif-plugin>=1.4.0",
-    "weasyprint>=60.0",
+    "weasyprint==69.0",
 ]
 
 [project.optional-dependencies]
