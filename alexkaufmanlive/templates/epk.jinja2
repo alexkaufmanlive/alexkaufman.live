@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Alex Kaufman — EPK</title>
+    <style>
+        @font-face {
+            font-family: "Space Grotesk";
+            font-weight: 300 700;
+            src: url("{{ font_space }}") format("woff2");
+        }
+
+        /* Letter page. Top margin reserves room for the running header
+           (alexkaufman.live chip + tagline). Bottom margin holds the
+           page-footer line. */
+        @page {
+            size: letter;
+            margin: 0.95in 0.5in 0.55in 0.5in;
+            background-color: #171419;
+
+            @top-left {
+                content: element(epkheader);
+                width: 100%;
+                vertical-align: bottom;
+                padding-bottom: 0.18in;
+            }
+            @bottom-center {
+                content: "alexkaufman.live  //  alexkaufmancomedy@gmail.com";
+                color: #ff9549;
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 8pt;
+            }
+        }
+
+        :root {
+            --background: #171419;
+            --heading: #ff9549;
+            --accent: #ff9549;
+            --text: #fff7eb;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text);
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 11.5pt;
+            line-height: 1.55;
+        }
+
+        a {
+            color: var(--text);
+            text-decoration: underline;
+        }
+
+        h1 {
+            color: var(--heading);
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 20pt;
+            margin: 0 0 0.4em 0;
+            letter-spacing: 0.02em;
+        }
+        h1:first-of-type { margin-top: 0; }
+
+        p { margin: 0 0 0.7em 0; font-weight: 400; }
+        ul { margin: 0 0 0.6em 0; padding-left: 1.4em; }
+        li { margin-bottom: 0.3em; }
+        li::marker { color: var(--text); }
+
+        /* Running header — placed in @top-left on every page. The
+           font-size set here is what the margin box inherits. */
+        .epk-pageheader {
+            position: running(epkheader);
+            font-size: 14pt;
+            line-height: 1;
+            color: var(--text);
+        }
+        .epk-brand {
+            background-color: var(--accent);
+            color: var(--background);
+            padding: 0.3em 0.6em;
+            font-weight: 500;
+        }
+        .epk-tagline {
+            color: var(--text);
+            padding-left: 0.55em;
+        }
+
+        /* Each page's content sits in its own main with its own
+           orange border. Fixed height = printable-area height (11in
+           page - 0.95in top margin - 0.55in bottom margin = 9.5in)
+           so both pages' frames look identical regardless of how much
+           content sits on each page. */
+        main {
+            border: 2pt solid var(--accent);
+            padding: 0.3in 0.4in;
+            box-sizing: border-box;
+            height: 9.5in;
+        }
+
+        /* Force a page break between the two <main> blocks. */
+        main + main { page-break-before: always; break-before: page; }
+
+        /* Hero image on page 1.
+           Markdown renders the image as <p><a><picture><img></picture></a></p>.
+           Force every level of that nesting to fill the box, then use
+           object-fit + object-position to crop/zoom on the face. */
+        main:first-of-type > p:first-of-type {
+            width: 100%;
+            height: 2.6in;
+            overflow: hidden;
+            margin: 0 0 0.25in 0;
+        }
+        main:first-of-type > p:first-of-type a,
+        main:first-of-type > p:first-of-type picture {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        main:first-of-type > p:first-of-type img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 30% 33%;
+            display: block;
+            transform: scale(2);
+            transform-origin: 30% 33%;
+        }
+
+        /* The "**tagline**" line right after the hero — duplicates the
+           running header, so hide it. */
+        main:first-of-type > p:nth-of-type(2) { display: none; }
+
+        /* Photo gallery on page 2 — leftmost photo spans both rows. */
+        .gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 2.15in 2.15in;
+            gap: 0.12in;
+            margin-top: 0.05in;
+        }
+        .gallery_img { overflow: hidden; }
+        .gallery_item-1 { grid-column: 1; grid-row: 1 / span 2; }
+        .gallery_item-2 { grid-column: 2; grid-row: 1; }
+        .gallery_item-3 { grid-column: 2; grid-row: 2; }
+        .gallery_img img,
+        .gallery_img picture { width: 100%; height: 100%; display: block; }
+        .gallery_img img { object-fit: cover; }
+
+        /* Social media row — horizontal, centered, larger.
+           Icons are inline SVGs with paths that inherit fill from
+           `fill="currentColor"`. Forcing color on every level
+           overrides the orange link-color inheritance. */
+        .social-media {
+            display: flex;
+            justify-content: center;
+            gap: 2.5em;
+            margin-bottom: 0.15in;
+            font-size: 14pt;
+        }
+        .social-media-item p { margin: 0; }
+        .social-media a {
+            color: var(--text);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4em;
+        }
+        .social-media svg,
+        .social-media svg * {
+            fill: #fff7eb !important;
+            color: #fff7eb !important;
+        }
+        .social-media svg {
+            width: 1.3em;
+            height: 1.3em;
+            vertical-align: -0.25em;
+        }
+    </style>
+</head>
+<body>
+    <div class="epk-pageheader">
+        <span class="epk-brand">alexkaufman.live</span><span class="epk-tagline">{{ tagline }}</span>
+    </div>
+    <main>
+        {{ content_top }}
+    </main>
+    <main>
+        {{ content_bottom }}
+    </main>
+</body>
+</html>

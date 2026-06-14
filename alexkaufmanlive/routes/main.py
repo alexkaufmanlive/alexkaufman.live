@@ -2,6 +2,7 @@
 
 import hashlib
 import hmac
+import pathlib
 import subprocess
 
 from flask import (
@@ -24,6 +25,7 @@ from ..content import (
 from ..services.email import bonedry_optin, subscribe_to_buttondown
 from ..services.jsonld import default_schemas, home_schemas
 from ..services.markdown import build_preload_link, og_image_url
+from ..services.pdf import render_pdf
 
 bp = Blueprint("main", __name__)
 
@@ -84,6 +86,89 @@ def sitemap():
     response = make_response(xml_sitemap)
     response.headers["Content-Type"] = "application/xml"
     return response
+
+
+@bp.route("/epk")
+@bp.route("/epk.pdf")
+def epk():
+    """Render the electronic press kit as a two-page Letter-size PDF.
+
+    The body content is the same `home.md` as the home page, rendered
+    with `is_epk=True` so it skips the Upcoming Shows + email CTA and
+    inserts a page break after Social Media. The EPK template wraps
+    that content with print-specific CSS (frame, page header/footer).
+    """
+    static_dir = pathlib.Path(current_app.static_folder).resolve()
+
+    body_html = render_markdown_page(
+        "home.md",
+        is_epk=True,
+        upcoming_shows=[],
+    )
+
+    # WeasyPrint doesn't resolve SVG `currentColor` through the outer
+    # HTML's CSS like a browser does, so inline-icon SVGs that use
+    # `fill="currentColor"` render black in the PDF. Substitute the
+    # placeholder for the actual text color only in this PDF render;
+    # the source SVGs (and the website) stay untouched.
+    body_html = body_html.replace('fill="currentColor"', 'fill="#fff7eb"')
+
+    # Split on the marker home.md emits between Social Media and Clips
+    # when is_epk. Each half is rendered into its own <main> box with
+    # its own border — far more reliable than trying to make a single
+    # border element span pages via box-decoration-break or fixed
+    # positioning.
+    page_break_marker = '<div class="epk-page-break"></div>'
+    if page_break_marker in body_html:
+        content_top, content_bottom = body_html.split(page_break_marker, 1)
+    else:
+        content_top, content_bottom = body_html, ""
+
+    html = render_template(
+        "epk.jinja2",
+        content_top=content_top,
+        content_bottom=content_bottom,
+        font_space=(static_dir / "fonts/space-grotesk-latin.woff2").as_uri(),
+    )
+
+    pdf_bytes = render_pdf(
+        html,
+        base_url=request.base_url,
+        url_fetcher=_make_static_url_fetcher(static_dir),
+    )
+
+    response = make_response(pdf_bytes)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = (
+        'inline; filename="alex-kaufman-epk.pdf"'
+    )
+    return response
+
+
+def _make_static_url_fetcher(static_dir: pathlib.Path):
+    """Custom WeasyPrint URL fetcher that resolves /static/* URLs to disk.
+
+    Routes that emit `<img src="/static/...">` (via url_for in templates)
+    would otherwise force WeasyPrint to fetch over HTTP. We map those
+    requests straight to local files so PDF generation works without
+    the dev server running and without an outbound HTTP round-trip.
+    """
+    from urllib.parse import unquote, urlparse
+
+    import weasyprint
+
+    def fetcher(url):
+        parsed = urlparse(url)
+        if parsed.scheme in ("http", "https"):
+            path = unquote(parsed.path)
+            if path.startswith("/static/"):
+                rel = path[len("/static/") :]
+                local = static_dir / rel
+                if local.exists():
+                    return weasyprint.default_url_fetcher(local.as_uri())
+        return weasyprint.default_url_fetcher(url)
+
+    return fetcher
 
 
 @bp.route("/contact/")

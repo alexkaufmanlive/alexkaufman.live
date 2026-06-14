@@ -2,11 +2,13 @@
 
 **{{ tagline }}**
 
+{% if not is_epk %}
 # Upcoming Shows
 
 {{ parts.show_list(upcoming_shows) }}
 
 {{ parts.email_list_cta() }}
+{% endif %}
 
 # About
 
@@ -39,6 +41,8 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 
 </div>
 </div>
+
+{% if is_epk %}<div class="epk-page-break"></div>{% endif %}
 
 # Clips
 
