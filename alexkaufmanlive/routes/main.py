@@ -91,7 +91,86 @@ def sitemap():
 @bp.route("/epk")
 @bp.route("/epk.pdf")
 def epk():
-    """Render the electronic press kit as a two-page Letter-size PDF.
+    """Serve the electronic press kit as a two-page Letter-size PDF.
+
+    Rendering the PDF with WeasyPrint is expensive (~hundreds of ms),
+    so the result is cached on disk under the instance folder. The
+    cache key is a hash of the two inputs that determine the output —
+    `home.md` (the body content) and `epk.jinja2` (the print template).
+    On each request we recompute the hash: a cache hit serves the
+    stored bytes, a miss regenerates the PDF and rewrites the cache.
+    """
+    cache_key = _epk_cache_key()
+    cache_path = _epk_cache_dir() / f"epk-{cache_key}.pdf"
+
+    if cache_path.exists():
+        pdf_bytes = cache_path.read_bytes()
+    else:
+        pdf_bytes = _render_epk_pdf()
+        _write_epk_cache(cache_path, pdf_bytes)
+
+    response = make_response(pdf_bytes)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = (
+        'inline; filename="alex-kaufman-epk.pdf"'
+    )
+    return response
+
+
+def _epk_cache_dir() -> pathlib.Path:
+    """Directory holding cached EPK PDFs, inside the Flask instance folder."""
+    return pathlib.Path(current_app.instance_path) / "epk_cache"
+
+
+def _epk_cache_inputs() -> list[pathlib.Path]:
+    """Files whose contents determine the rendered EPK PDF.
+
+    Changing either invalidates the cache. `home.md` is the body
+    content; `epk.jinja2` is the print-specific template/CSS.
+    """
+    root = pathlib.Path(current_app.root_path)
+    return [
+        root / "content" / "home.md",
+        root / "templates" / "epk.jinja2",
+    ]
+
+
+def _epk_cache_key() -> str:
+    """Short hex digest of the concatenated EPK input files."""
+    digest = hashlib.sha256()
+    for path in _epk_cache_inputs():
+        # Domain-separate each file so swapping content between them
+        # can't collide, and tag with the path for good measure.
+        digest.update(path.name.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()[:16]
+
+
+def _write_epk_cache(cache_path: pathlib.Path, pdf_bytes: bytes) -> None:
+    """Write the PDF to the cache, replacing any stale (old-hash) entries.
+
+    Written via a temp file + atomic rename so a concurrent request can
+    never read a half-written PDF. Cache failures are non-fatal — the
+    request already has valid bytes to serve.
+    """
+    cache_dir = cache_path.parent
+    try:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        # Drop PDFs from previous hashes so the cache holds one file.
+        for stale in cache_dir.glob("epk-*.pdf"):
+            if stale != cache_path:
+                stale.unlink(missing_ok=True)
+        tmp = cache_path.with_suffix(".pdf.tmp")
+        tmp.write_bytes(pdf_bytes)
+        tmp.replace(cache_path)
+    except OSError as exc:
+        current_app.logger.warning("EPK cache write failed: %s", exc)
+
+
+def _render_epk_pdf() -> bytes:
+    """Render the EPK to PDF bytes (the expensive, uncached operation).
 
     The body content is the same `home.md` as the home page, rendered
     with `is_epk=True` so it skips the Upcoming Shows + email CTA and
@@ -131,18 +210,11 @@ def epk():
         font_space=(static_dir / "fonts/space-grotesk-latin.woff2").as_uri(),
     )
 
-    pdf_bytes = render_pdf(
+    return render_pdf(
         html,
         base_url=request.base_url,
         url_fetcher=_make_static_url_fetcher(static_dir),
     )
-
-    response = make_response(pdf_bytes)
-    response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = (
-        'inline; filename="alex-kaufman-epk.pdf"'
-    )
-    return response
 
 
 def _make_static_url_fetcher(static_dir: pathlib.Path):
