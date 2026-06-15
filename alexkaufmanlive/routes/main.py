@@ -3,7 +3,6 @@
 import hashlib
 import hmac
 import pathlib
-import re
 import subprocess
 
 from flask import (
@@ -174,57 +173,23 @@ def _write_epk_cache(cache_path: pathlib.Path, pdf_bytes: bytes) -> None:
         current_app.logger.warning("EPK cache write failed: %s", exc)
 
 
-def _strip_h1_section(html: str, heading: str, next_heading: str) -> str:
-    """Remove a whole `<h1>` section from rendered HTML.
-
-    Slices out everything from `<h1>{heading}</h1>` up to (but not
-    including) the following `<h1>{next_heading}</h1>`. Used by the EPK
-    renderer to drop website-only sections without `home.md` needing to
-    know which output it's being rendered for.
-
-    No-op if either anchor is missing or out of order, so a content edit
-    degrades to "section kept" rather than a corrupted render.
-    """
-    start_tag = f"<h1>{heading}</h1>"
-    end_tag = f"<h1>{next_heading}</h1>"
-    start = html.find(start_tag)
-    end = html.find(end_tag)
-    if start == -1 or end == -1 or end < start:
-        return html
-    return html[:start] + html[end:]
-
-
 def _render_epk_pdf() -> bytes:
     """Render the EPK to PDF bytes (the expensive, uncached operation).
 
-    The body content is the same `home.md` as the home page. `home.md`
-    is a single, declarative source with no print-specific branching;
-    every difference between the website and the press kit is applied
-    here, by transforming the rendered HTML: dropping the website-only
-    Upcoming Shows section and bio paragraph, recoloring inline icons,
-    stripping click-to-fullsize anchors, and splitting the body across
-    two pages. The EPK template then wraps the two halves with
-    print-specific CSS (frame, page header/footer).
+    The body content is the same `home.md` as the home page, rendered
+    with `epk=True`. `home.md` declares its own web-only / print-only
+    bits with `{% if not epk %}` / `{% if epk %}` blocks (the Upcoming
+    Shows section, the producing-credits paragraph, and the page-break
+    marker), so this function never needs to know `home.md`'s headings
+    or prose — edit the content freely without touching this code. The
+    transforms that remain here key off HTML structure, not wording:
+    recoloring inline icons and splitting the body on a marker comment.
+    The EPK template then wraps the two halves with print-specific CSS
+    (frame, page header/footer).
     """
     static_dir = pathlib.Path(current_app.static_folder).resolve()
 
-    body_html = render_markdown_page("home.md", upcoming_shows=[])
-
-    # The website's Upcoming Shows section (heading, show list, and email
-    # signup CTA with its modal/script) is irrelevant to a press kit, so
-    # drop the whole section: everything from its <h1> up to the next one.
-    body_html = _strip_h1_section(body_html, "Upcoming Shows", "About")
-
-    # The bio closes with a paragraph about Alex's producing work (Bone
-    # Dry Comedy); the press kit omits it to keep About to one page.
-    # Anchored on the paragraph's opening words so an edit elsewhere in
-    # the bio can't strip the wrong one — a no-match keeps the paragraph.
-    body_html = re.sub(
-        r"<p>During undergrad\b.*?</p>\s*",
-        "",
-        body_html,
-        flags=re.DOTALL,
-    )
+    body_html = render_markdown_page("home.md", upcoming_shows=[], epk=True)
 
     # WeasyPrint doesn't resolve SVG `currentColor` through the outer
     # HTML's CSS like a browser does, so inline-icon SVGs that use
@@ -233,18 +198,14 @@ def _render_epk_pdf() -> bytes:
     # the source SVGs (and the website) stay untouched.
     body_html = body_html.replace('fill="currentColor"', 'fill="#fff7eb"')
 
-    # Break across two pages before the Social Media section, so page 1
-    # holds the hero/About/Clips and page 2 holds Social/Press/Photos.
-    # Each half is rendered into its own <main> box with its own border —
-    # far more reliable than trying to make a single border element span
-    # pages via box-decoration-break or fixed positioning. If the heading
-    # ever goes missing, everything stays on page 1 rather than breaking.
-    social_heading = "<h1>Social Media</h1>"
-    split = body_html.find(social_heading)
-    if split != -1:
-        content_top, content_bottom = body_html[:split], body_html[split:]
-    else:
-        content_top, content_bottom = body_html, ""
+    # Break across two pages at the marker `home.md` emits (in epk mode)
+    # before the Social Media section, so page 1 holds hero/About/Clips
+    # and page 2 holds Social/Press/Photos. Each half is rendered into
+    # its own <main> box with its own border — far more reliable than
+    # trying to make a single border element span pages via
+    # box-decoration-break or fixed positioning. If the marker ever goes
+    # missing, everything stays on page 1 rather than breaking.
+    content_top, _, content_bottom = body_html.partition("<!--epk-split-->")
 
     # The hero photo is painted as the linked <a>'s CSS background (see
     # epk.jinja2) instead of an <img>. WeasyPrint emits a PDF link

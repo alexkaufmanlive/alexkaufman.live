@@ -2,11 +2,13 @@
 
 **{{ tagline }}**
 
+{% if not epk %}
 # Upcoming Shows
 
 {{ parts.show_list(upcoming_shows) }}
 
 {{ parts.email_list_cta() }}
+{% endif %}
 
 # About
 
@@ -16,7 +18,9 @@ Alex Kaufman is a former physicist who swapped science for stand-up while waitin
 
 Alex has featured for Kyle Kinane, Sean Patton, and more, and performed at festivals including the 2026 Asheville Comedy Festival, North Carolina Comedy Festival, and The Loons on the Lake Comedy Festival. He has also been featured in volume 2 of Bar Comedy USA's [America's Best Bar Comics](https://www.amazon.com/dp/B0DPN2CGH9). You can catch him performing at clubs, festivals, and shows around the country.
 
+{% if not epk %}
 During undergrad he founded the now iconic Bob's Comedy Jive and during grad school started the production company Bone Dry Comedy. An accomplished producer, Alex brought dozens of headliners to perform in cities all over Montana including Amy Miller, Billy Wayne Davis, and Kate Willett.
+{% endif %}
 
 </div>
 
@@ -30,6 +34,7 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 
 </div>
 
+{% if epk %}<!--epk-split-->{% endif %}
 # Social Media
 
 <div class="social-media">
