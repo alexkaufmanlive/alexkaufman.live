@@ -1,16 +1,16 @@
-![Alex Kaufman Comedy](alexkaufmancomedy-1724424682.jpg)
+![Alex Kaufman, standup comic/former physicist](alex-kaufman-comedian-headshot.jpg)
 
-**{{ tagline }}**
+# {{ tagline }}
 
 {% if not epk %}
-# Upcoming Shows
+## Upcoming Shows
 
 {{ parts.show_list(upcoming_shows) }}
 
 {{ parts.email_list_cta() }}
 {% endif %}
 
-# About
+## About
 
 <div class="about">
 
@@ -24,7 +24,7 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 
 </div>
 
-# Clips
+## Clips
 
 <div class="video-clips">
 
@@ -35,12 +35,12 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 </div>
 
 {% if epk %}<!--epk-split-->{% endif %}
-# Social Media
+## Social Media
 
 <div class="social-media">
 <div class="social-media-item">
 
-[{% include 'icons/facebook.svg' %} facebook](https://facebook.com/dustiestgolf)
+[{% include 'icons/facebook.svg' %} facebook](https://facebook.com/alexkaufmanlive)
 
 </div>
 <div class="social-media-item">
@@ -55,31 +55,31 @@ During undergrad he founded the now iconic Bob's Comedy Jive and during grad sch
 </div>
 </div>
 
-# Press
+## Press
 
 - [Bone Dry is making Montana's comedy desert bloom](https://billingsgazette.com/news/local/bone-dry-is-making-montanas-comedy-desert-bloom/article_2f6db7ca-c365-11ed-93d6-2b30163b139b.html)
 
 - [From Physics to... Comedy?](https://www.pugetsound.edu/stories/physics-comedy)
 
-# Photos
+## Photos
 
 <div class="gallery">
 
 <div class="gallery_img gallery_item-1">
 
-![Alex Kaufman mic shot.](alexkaufmancomedy-1724385868.jpg)
+![Alex Kaufman, standup comedian, performing onstage](alex-kaufman-standup-onstage.jpg)
 
 </div>
 
 <div class="gallery_img gallery_item-2">
 
-![Alex Kaufman black and white.](alexkaufmancomedy-1724385732.jpg)
+![Alex Kaufman, comedian, black and white portrait](alex-kaufman-comedian-portrait-bw.jpg)
 
 </div>
 
 <div class="gallery_img gallery_item-3">
 
-![Alex Kaufman in color.](alexkaufmancomedy-1724385803.jpg)
+![Alex Kaufman, comedian, color portrait](alex-kaufman-comedian-portrait.jpg)
 
 </div>
 

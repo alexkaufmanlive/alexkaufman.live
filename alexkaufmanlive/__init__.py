@@ -17,7 +17,7 @@ site_metadata = {
     # Hero / LCP image filename (in content/static/originals/). Also used
     # as the default Open Graph / Twitter / Person.image. Change it here
     # and every <meta> tag and schema follows.
-    "og_image": "alexkaufmancomedy-1724424682.jpg",
+    "og_image": "alex-kaufman-comedian-headshot.jpg",
 }
 
 

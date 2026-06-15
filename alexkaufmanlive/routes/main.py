@@ -43,13 +43,12 @@ def home_page():
             "home.md", hero_filename=hero, upcoming_shows=upcoming_shows()
         ),
         title="alexkaufman.live",
-        og_title="Alex Kaufman | standup comic/former physicist",
+        og_title="alex kaufman | standup comic/former physicist",
         og_description="A former physicist who swapped science for standup comedy. Performing at clubs and festivals across the country.",
         page_class="home",
         preload=build_preload_link(hero, manifest),
         jsonld=home_schemas(
             hero_image_url=og_image_url(hero, manifest),
-            description=site_metadata["tagline"],
         ),
     )
 
@@ -89,6 +88,23 @@ def sitemap():
     return response
 
 
+@bp.route("/robots.txt")
+def robots():
+    """Serve robots.txt: allow all crawlers and point them at the sitemap."""
+    host_base = request.host_url.rstrip("/")
+    body = "\n".join(
+        [
+            "User-agent: *",
+            "Allow: /",
+            f"Sitemap: {host_base}/sitemap.xml",
+            "",
+        ]
+    )
+    response = make_response(body)
+    response.headers["Content-Type"] = "text/plain"
+    return response
+
+
 @bp.route("/epk")
 @bp.route("/epk.pdf")
 def epk():
@@ -112,9 +128,7 @@ def epk():
 
     response = make_response(pdf_bytes)
     response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = (
-        'inline; filename="alex-kaufman-epk.pdf"'
-    )
+    response.headers["Content-Disposition"] = 'inline; filename="alex-kaufman-epk.pdf"'
     return response
 
 
@@ -220,9 +234,7 @@ def _render_epk_pdf() -> bytes:
     hero_bg_url = url_for(
         "static",
         filename=(
-            f"images/{hero_info['stem']}-1200.jpg"
-            if hero_info
-            else f"originals/{hero}"
+            f"images/{hero_info['stem']}-1200.jpg" if hero_info else f"originals/{hero}"
         ),
     )
 
@@ -273,8 +285,8 @@ def contact_page():
     return render_template(
         "base.jinja2",
         content=render_markdown_page("contact.md"),
-        title="alexkaufman.live",
-        page_class="home",
+        page_title="contact | alexkaufman.live",
+        page_class="contact",
         jsonld=default_schemas(),
     )
 
@@ -381,6 +393,5 @@ def bonedryoptin(id):
         "base.jinja2",
         content="You have been opted in. Welcome to the club!",
         title="alexkaufman.live",
-        page_class="home",
         jsonld=default_schemas(),
     )

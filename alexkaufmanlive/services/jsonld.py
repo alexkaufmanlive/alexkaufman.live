@@ -35,6 +35,17 @@ SOCIAL_URLS = [
     "https://youtube.com/@alexkaufmanlive",
 ]
 
+REFERENCE_URLS = [
+    "https://billingsgazette.com/news/local/bone-dry-is-making-montanas-comedy-desert-bloom/article_2f6db7ca-c365-11ed-93d6-2b30163b139b.html",
+    "https://www.pugetsound.edu/stories/physics-comedy",
+    "https://www.amazon.com/dp/B0DPN2CGH9",
+]
+
+PERSON_DESCRIPTION = (
+    "Standup comedian and former physicist based in Bozeman, Montana. "
+    "Performs at clubs and festivals nationally."
+)
+
 
 def _person_ref():
     """Inline reference to the Person entity defined on the home page.
@@ -65,15 +76,28 @@ def person_schema(image_url=None, description=None):
         "@type": "Person",
         "@id": PERSON_ID,
         "name": "Alex Kaufman",
+        "alternateName": "Alex Kaufman Comedy",
         "jobTitle": "Stand-up Comedian",
+        "description": description or PERSON_DESCRIPTION,
         "url": SITE_URL,
-        "sameAs": list(SOCIAL_URLS),
+        "image": image_url,
+        "sameAs": SOCIAL_URLS + REFERENCE_URLS,
+        "knowsAbout": ["Standup Comedy", "Physics"],
+        "alumniOf": [
+            {"@type": "CollegeOrUniversity", "name": "University of Puget Sound"},
+            {"@type": "CollegeOrUniversity", "name": "Montana State University"},
+        ],
+        "homeLocation": {
+            "@type": "Place",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Bozeman",
+                "addressRegion": "MT",
+                "addressCountry": "US",
+            },
+        },
     }
-    if image_url:
-        schema["image"] = image_url
-    if description:
-        schema["description"] = description
-    return schema
+    return _compact(schema)
 
 
 def event_schema(show, page_url=None, fallback_image_url=None):

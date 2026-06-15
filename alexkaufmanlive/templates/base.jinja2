@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 {% block head %}
-    <title>{% block title %}{{ site_name }}{% endblock %}</title>
+    <title>{% block title %}{{ page_title or site_name }}{% endblock %}</title>
     <meta charset="UTF-8" />
     <meta
         name="viewport"
@@ -63,7 +63,7 @@
 <body class="{{ page_class }}">
     <header>
         {% block header %}
-        <a class="title" href="/"><h1>{{ site_name }}</h1></a>
+        <a class="title" href="/"><span class="site-title">{{ site_name }}</span></a>
         <nav>
             {% block nav %}
             <p>
@@ -94,11 +94,10 @@
         </h2>
 
         </span>
-
-        {% endblock %}
         <span>
-            Inspired by <a href="https://bearblog.dev">Bear ʕ•ᴥ•ʔ</a>
+                 Inspired by <a href="https://bearblog.dev">Bear ʕ•ᴥ•ʔ</a>
         </span>
+        {% endblock %}
     </footer>
 </body>
 </html>

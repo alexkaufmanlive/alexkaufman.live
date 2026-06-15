@@ -54,7 +54,8 @@
             text-decoration: underline;
         }
 
-        h1 {
+        h1 { display: none; }
+        h2 {
             color: var(--heading);
             font-family: "Space Grotesk", sans-serif;
             font-weight: 700;
@@ -62,7 +63,7 @@
             margin: 0 0 0.4em 0;
             letter-spacing: 0.02em;
         }
-        h1:first-of-type { margin-top: 0; }
+        h2:first-of-type { margin-top: 0; }
 
         p { margin: 0 0 0.7em 0; font-weight: 400; }
         ul { margin: 0 0 0.6em 0; padding-left: 1.4em; }
@@ -134,10 +135,6 @@
         main:first-of-type > p:first-of-type img {
             display: none;
         }
-
-        /* The "**tagline**" line right after the hero — duplicates the
-           running header, so hide it. */
-        main:first-of-type > p:nth-of-type(2) { display: none; }
 
         /* Photo gallery on page 2 — leftmost photo spans the full
            height, the other two stack beside it. The website renders

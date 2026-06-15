@@ -44,9 +44,9 @@ def test_epk_split_marker_partitions_cleanly(app):
     html = _render(app, epk=True)
     top, sep, bottom = html.partition(EPK_SPLIT_MARKER)
     assert sep == EPK_SPLIT_MARKER, "split marker missing from epk render"
-    assert "<h1>About</h1>" in top
-    assert "<h1>Social Media</h1>" in bottom
-    assert "<h1>Social Media</h1>" not in top
+    assert "<h2>About</h2>" in top
+    assert "<h2>Social Media</h2>" in bottom
+    assert "<h2>Social Media</h2>" not in top
 
 
 @pytest.mark.skipif(

@@ -30,7 +30,7 @@ def index():
         page=page,
         has_prev=page > 1,
         has_next=has_next,
-        title="alexkaufman.live | shows",
+        title="shows | alexkaufman.live",
         page_class="shows",
         jsonld=default_schemas(),
     )
