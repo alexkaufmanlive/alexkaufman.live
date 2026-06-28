@@ -1,6 +1,7 @@
 ---
 title: Alex Kaufman Live at The 1889 Barn Bar
 show_date: 2026-08-05
+hero_image: banner_1.jpg
 meta:
   venue: The 1889 Barn Bar
   street_address: 12670 Portnell Road
@@ -12,9 +13,9 @@ meta:
   eventbrite_id: 1989438931398
 ---
 
-{{ parts.eventbrite_button() }}
+{{ parts.youtube("u6-MLYSr1NY", title="Comedian Alex Kaufman doesn't trust aioli.")}}
 
-When purchasing tickets, make sure to select the **8:30pm show**.
+{{ parts.eventbrite_button() }}
 
 ## Critical Information
 
@@ -26,9 +27,9 @@ When purchasing tickets, make sure to select the **8:30pm show**.
 
 ## About the Show
 
-Alex Kaufman is a standup comedian from Bozeman, Montana — and he's coming home. Whether you've seen him before or this is your first time, expect a night of sharp, original standup comedy in one of the coolest venues in the valley.
+Alex Kaufman is a standup comedian from Bozeman, Montana and he's coming home. Whether you've seen him before or this is your first time, expect a night of sharp, original standup comedy in one of the coolest venues in the valley.
 
-The show is part of Comedy Nights at The 1889 Barn Bar, featuring four shows with four different lineups. Alex performs at the **8:30pm show** — make sure you grab tickets for the right one.
+The show is part of Comedy Nights at The 1889 Barn Bar, featuring four shows with four different lineups. Alex performs at the **8:30pm show** make sure you grab tickets for the right one.
 
 ## About Alex Kaufman
 
