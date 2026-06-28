@@ -50,6 +50,20 @@
 </figure>
 {%- endmacro %}
 
+{#- Embed a YouTube video inline. Works for Shorts too — a Short is a
+    normal video, YouTube just hides the embed button. Take the 11-char id
+    from the Shorts URL (youtube.com/shorts/<id>) and pass it here.
+
+    `vertical=True` (the default) frames it 9:16 for Shorts; pass
+    vertical=False for a normal 16:9 landscape video. Uses the
+    nocookie host and lazy loading. Put blank lines around the call in
+    markdown so it renders as its own block. -#}
+{% macro youtube(video_id, title="YouTube video", vertical=True) -%}
+<div class="youtube-embed{{ ' vertical' if vertical else '' }}">
+<iframe src="https://www.youtube-nocookie.com/embed/{{ video_id }}" title="{{ title }}" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerated-sensors; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+{%- endmacro %}
+
 {% macro eventbrite_button() -%}
 <button id="event-button" type="button">buy tickets</button>
 

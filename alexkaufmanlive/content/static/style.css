@@ -277,6 +277,27 @@ main h1 {
 /* Video clips — clickable thumbnails linking out to the videos. Side
    by side on desktop, stacked on mobile. Each clip is a <figure> with a
    responsive <picture> thumbnail and a caption. */
+/* Inline YouTube embed (see the youtube() macro). Vertical = Shorts (9:16,
+   capped so it isn't enormous on desktop); otherwise 16:9 full width. */
+.youtube-embed {
+    margin: 1.5em 0;
+    aspect-ratio: 16 / 9;
+}
+
+.youtube-embed.vertical {
+    aspect-ratio: 9 / 16;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.youtube-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+
 .video-clips {
     display: flex;
     gap: 1rem;
