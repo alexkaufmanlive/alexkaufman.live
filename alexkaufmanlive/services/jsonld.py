@@ -159,14 +159,14 @@ def event_schema(show, page_url=None, fallback_image_url=None):
         }
     )
 
-    # Image URL: per-show poster lives in /static/originals/, matching
-    # how the markdown renderer and per-show meta template resolve it.
-    # Fall back to the default hero so every event ships with an image
-    # — required for rich-result eligibility.
-    image = show.get("image")
-    if image:
+    # Image URL: prefer the dedicated social image, then the on-page hero,
+    # then the site default — so every event ships with an image (required
+    # for rich-result eligibility). Posters live in /static/originals/,
+    # matching how the markdown renderer and og:image meta resolve them.
+    social_image = show.get("image") or show.get("hero_image")
+    if social_image:
         schema["image"] = url_for(
-            "static", filename=f"originals/{image}", _external=True
+            "static", filename=f"originals/{social_image}", _external=True
         )
     elif fallback_image_url:
         schema["image"] = fallback_image_url

@@ -9,7 +9,7 @@ from flask import (
 from .. import site_metadata
 from ..content import get_show, image_manifest, past_shows_page, upcoming_shows
 from ..services.jsonld import default_schemas, event_schemas
-from ..services.markdown import og_image_url
+from ..services.markdown import build_preload_link, og_image_url
 
 bp = Blueprint("shows", __name__, url_prefix="/shows")
 
@@ -55,10 +55,15 @@ def show(show_slug):
         return redirect(show["redirect"], code=302)
 
     # Content is already rendered HTML at this point.
-    fallback_image = og_image_url(site_metadata["og_image"], image_manifest())
+    manifest = image_manifest()
+    fallback_image = og_image_url(site_metadata["og_image"], manifest)
+    # Preload the hero banner (if any) so the browser fetches it before
+    # parsing the <body>. Pairs with loading="eager" on the hero.
+    # build_preload_link returns empty markup when there's no hero_image.
     return render_template(
         "show.jinja2",
         og_description=_show_og_description(show),
+        preload=build_preload_link(show["hero_image"], manifest),
         jsonld=event_schemas(
             show, page_url=request.url, fallback_image_url=fallback_image
         ),

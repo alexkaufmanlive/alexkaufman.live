@@ -364,6 +364,15 @@ main h1 {
     }
 }
 
+.show-hero {
+    margin-bottom: 1.5em;
+}
+
+.show-hero img {
+    display: block;
+    width: 100%;
+}
+
 .show-head {
     margin-bottom: 2em;
 

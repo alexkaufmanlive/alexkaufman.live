@@ -19,7 +19,7 @@ from datetime import date, datetime
 import frontmatter
 from flask import current_app
 
-from .services.markdown import render_page
+from .services.markdown import render_page, render_responsive_picture
 
 # Module-level caches, populated by load_shows().
 # Shows are stored as plain dicts so templates can use either attribute
@@ -143,6 +143,7 @@ def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
     end_date = _try_coerce_date(data["end_date"]) if "end_date" in data else None
     redirect_url = data.get("redirect")
     image = data.get("image")
+    hero_image = data.get("hero_image")
     meta = data.get("meta") or {}
 
     # Pre-render the markdown body once. Skip if this show is a pure
@@ -150,6 +151,7 @@ def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
     if redirect_url is None:
         content_html = render_page(
             post.content,
+            hero_filename=hero_image,
             title=title,
             show_date=show_date,
             end_date=end_date,
@@ -161,14 +163,27 @@ def _build_show(post, data: dict, show_file: pathlib.Path) -> dict:
     else:
         content_html = ""
 
+    if hero_image and redirect_url is None:
+        hero_html = render_responsive_picture(
+            hero_image,
+            _image_manifest,
+            alt=title,
+            href=meta.get("event_link"),
+            loading="eager",
+        )
+    else:
+        hero_html = ""
+
     return {
         "link": link,
         "title": title,
         "show_date": show_date,
         "end_date": end_date,
         "content": content_html,
+        "hero_html": hero_html,
         "redirect": redirect_url,
         "image": image,
+        "hero_image": hero_image,
         "meta": meta,
     }
 
