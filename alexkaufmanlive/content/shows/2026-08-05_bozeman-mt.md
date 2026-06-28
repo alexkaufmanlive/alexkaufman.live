@@ -2,6 +2,7 @@
 title: Alex Kaufman Live at The 1889 Barn Bar
 show_date: 2026-08-05
 hero_image: banner_1.jpg
+image: montana_social_preview.jpg
 meta:
   venue: The 1889 Barn Bar
   street_address: 12670 Portnell Road
