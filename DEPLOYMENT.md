@@ -118,6 +118,30 @@ On PythonAnywhere, you can monitor deployment activity in:
 - Review the deployment logs on PythonAnywhere
 - Ensure `update-site.sh` has execute permissions: `chmod +x update-site.sh`
 
+### Deploy Fails at the `git fetch` Step
+
+The webhook runs `update-site.sh` as the same user, so it uses
+`~/.ssh/id_ed25519` automatically. Two ways that breaks:
+
+- **"Host key verification failed"** — `~/.ssh/known_hosts` has no entry
+  for GitHub. Run `ssh -T git@github.com` once in a console and answer
+  `yes`. The webhook can't answer that prompt itself.
+- **"Permission denied (publickey)"** — the key isn't registered with
+  GitHub, or the clone used an HTTPS remote and never touches the key.
+  Check with `git -C ~/alexkaufman.live remote -v`; it should be a
+  `git@github.com:` URL.
+- **"UNPROTECTED PRIVATE KEY FILE"** — the key file is group- or
+  world-readable, so SSH refuses it. Common after pasting a key from
+  1Password into a new file. Fix with `chmod 600 ~/.ssh/id_ed25519`.
+- **"error in libcrypto" or "invalid format"** — the pasted key is
+  malformed, usually a missing trailing newline or a mangled
+  `-----BEGIN`/`-----END` line. Re-copy from the 1Password item and
+  paste again; don't hand-edit it.
+
+Verify the credential independently with `ssh -T git@github.com` —
+"successfully authenticated, but GitHub does not provide shell access"
+is the success case.
+
 ### "Webhook not configured" Error
 
 - The `OP_SERVICE_ACCOUNT_TOKEN` environment variable is not set

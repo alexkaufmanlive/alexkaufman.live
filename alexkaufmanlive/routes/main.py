@@ -30,6 +30,8 @@ from ..services.pdf import render_pdf
 
 bp = Blueprint("main", __name__)
 
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
+
 
 @bp.route("/")
 def home_page():
@@ -356,7 +358,7 @@ def git_update():
     try:
         current_app.logger.info("Running deployment script...")
         result = subprocess.run(
-            ["/home/dustiestgolf/alexkaufman.live/update-site.sh"],
+            [str(REPO_ROOT / "update-site.sh")],
             capture_output=True,
             text=True,
             timeout=600,

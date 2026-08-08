@@ -4,9 +4,13 @@
 # stale manifest) manifests as broken images on every page.
 set -euo pipefail
 
-source "/home/dustiestgolf/venv/bin/activate"
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV_PATH="${VENV_PATH:-$HOME/venv}"
+WSGI_PATH="${WSGI_PATH:-/var/www/alexkaufman_live_wsgi.py}"
 
-pushd "/home/dustiestgolf/alexkaufman.live"
+source "$VENV_PATH/bin/activate"
+
+pushd "$REPO_DIR"
 
 # Store the current commit hash before updating
 OLD_COMMIT=$(git rev-parse HEAD)
@@ -29,6 +33,6 @@ python scripts/build_images.py
 # Touch WSGI file to reload the web app. The app reads all show markdown
 # files and the image manifest into memory at startup, so the reload is
 # what picks up new content AND new image derivatives.
-touch /var/www/alexkaufman_live_wsgi.py
+touch "$WSGI_PATH"
 
 popd
