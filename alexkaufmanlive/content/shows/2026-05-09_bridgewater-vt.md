@@ -1,5 +1,5 @@
 ---
-title: "Bismark Comedy Show"
+title: "Woolen Mill Comedy Club"
 show_date: 2026-05-09
 meta:
   city: Bridgewater
