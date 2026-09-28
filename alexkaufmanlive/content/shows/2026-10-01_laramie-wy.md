@@ -1,6 +1,7 @@
 ---
 title: "Alex Kaufman & Serena Thiel coheadline Laramie"
 show_date: 2026-10-01
+image: ruffedupduck.jpg
 meta:
   venue: The Ruffed Up Duck
   street_address: 310 S 5th St.
@@ -8,6 +9,8 @@ meta:
   state: WY
   zip_code: 82070
 ---
+
+{{ parts.email_list_cta() }}
 
 Alex Kaufman and Serena Thiel are coheadlining The Ruffed Up Duck on Thursday, October 1st. Come see Alex, Serena, and some of Laramie's local favorites.
 
@@ -24,5 +27,3 @@ A standup comedian and former physicist, I have featured for Kyle Kinane and Sea
 The Ruffed Up Duck, 310 S 5th St., downtown Laramie, Wyoming.
 
 **Thursday, October 1, 2026.** .
-
-{{ parts.email_list_cta() }}
