@@ -1,7 +1,6 @@
 ---
 title: Laugh Out Loveland
 show_date: 2026-07-30
-end_date: 2026-08-02
 meta:
   street_address: 503 North Greene Street
   city: Greensboro

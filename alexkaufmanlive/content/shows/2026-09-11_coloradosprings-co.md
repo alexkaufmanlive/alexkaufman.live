@@ -1,7 +1,6 @@
 ---
 title: Mike Head at Loonees Comedy Corner
 show_date: 2026-09-11
-end_date: 2026-09-12
 meta:
   venue: Loonees Comedy Corner
   city: Colorado Springs

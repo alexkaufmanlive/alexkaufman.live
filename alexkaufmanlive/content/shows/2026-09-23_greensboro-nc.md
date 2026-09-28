@@ -1,7 +1,6 @@
 ---
 title: The North Carolina Comedy Festival
 show_date: 2026-09-23
-end_date: 2026-09-27
 meta:
   venue: The Idiot Box Comedy Club
   street_address: 503 North Greene Street
