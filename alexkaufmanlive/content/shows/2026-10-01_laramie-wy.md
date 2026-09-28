@@ -10,6 +10,8 @@ meta:
   zip_code: 82070
 ---
 
+![Taproom Takeover]({{ url_for('static', filename=image) }})
+
 {{ parts.email_list_cta() }}
 
 Alex Kaufman and Serena Thiel are coheadlining The Ruffed Up Duck on Thursday, October 1st. Come see Alex, Serena, and some of Laramie's local favorites.
