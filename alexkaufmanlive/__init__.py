@@ -42,18 +42,12 @@ def create_app():
     app.jinja_env.autoescape = False
 
     @app.template_filter("displaydate")
-    def displaydate(start, end=None):
-        """Format a date or date range: 'Sep 23, 2026' or 'Sep 23 – 27, 2026'."""
+    def displaydate(value):
+        """Format a date as 'Sep 23, 2026'."""
         from datetime import date as date_type
-        if not isinstance(start, date_type):
-            return str(start)
-        if end is None or end == start:
-            return start.strftime("%b %d, %Y")
-        if start.year == end.year and start.month == end.month:
-            return f"{start.strftime('%b %d')} – {end.strftime('%d, %Y')}"
-        if start.year == end.year:
-            return f"{start.strftime('%b %d')} – {end.strftime('%b %d, %Y')}"
-        return f"{start.strftime('%b %d, %Y')} – {end.strftime('%b %d, %Y')}"
+        if not isinstance(value, date_type):
+            return str(value)
+        return value.strftime("%b %d, %Y")
 
     # Load configuration
     app.config.from_mapping(

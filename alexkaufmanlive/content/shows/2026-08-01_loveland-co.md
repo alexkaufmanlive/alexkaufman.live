@@ -1,13 +1,13 @@
 ---
 title: Laugh Out Loveland
-show_date: 2026-07-30
+show_date: 2026-08-01
 meta:
-  venue: To The Fives Taproom & Lounge
-  street_address: 423 North Cleveland Avenue
+  venue: MeadKrieger Meadery
+  street_address: 452 North Washington Avenue
   city: Loveland
   state: CO
   zip_code: 80537
-  show_time: 7:00pm
+  show_time: 6:00pm
   event_link: https://www.laughoutloveland.com
 ---
 
@@ -15,8 +15,8 @@ The [Laugh Out Loveland Comedy Festival](https://www.laughoutloveland.com) is a 
 
 ## My Show
 
-**When:** Thursday, July 30th at {{ meta.show_time }}
+**When:** Saturday, August 1st at {{ meta.show_time }}
 
 **Where:** {{ meta.venue }}, {{ meta.street_address }}, {{ meta.city }}, {{ meta.state }}
 
-Headlined by Rick Bryan and hosted by Chet Tilly.
+Festival showcase hosted by Jennifer Sutherland.

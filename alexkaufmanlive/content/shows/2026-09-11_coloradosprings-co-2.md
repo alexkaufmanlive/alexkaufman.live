@@ -5,7 +5,7 @@ meta:
   venue: Loonees Comedy Corner
   city: Colorado Springs
   state: CO
-  show_time: 7:30pm
+  show_time: 9:45pm
   event_link: https://www.looneescc.com/events/137125
 ---
 
