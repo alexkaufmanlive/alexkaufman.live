@@ -9,4 +9,4 @@ meta:
   state: MT
 ---
 
-[Comedy under fire poster]({{ url_for('static', filename=image) }})
+[![Comedy Under Fire poster]({{ url_for('static', filename=image) }})]({{ meta.event_link }})
