@@ -5,3 +5,5 @@ meta:
   city: Beidgewater
   state: VT
 ---
+
+More details coming soon!

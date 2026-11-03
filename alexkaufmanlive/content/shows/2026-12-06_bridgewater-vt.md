@@ -5,3 +5,5 @@ meta:
   city: Bridgewater
   state: VT
 ---
+
+More details coming soon!
