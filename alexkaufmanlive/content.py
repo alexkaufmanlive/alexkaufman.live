@@ -77,7 +77,7 @@ def load_shows(app):
         app.logger.error(_format_load_errors(errors))
 
     _shows_by_link = by_link
-    _shows_sorted = sorted(by_link.values(), key=lambda s: s["show_date"])
+    _shows_sorted = sorted(by_link.values(), key=lambda s: (s["show_date"], s["link"]))
     app.logger.info(f"loaded {len(_shows_sorted)} shows")
 
 
