@@ -1,5 +1,5 @@
 ---
-title: Andrew Rivers at Loonees Comedy Corner
+title: Andrew Rivers at Loonees – 9:15pm
 show_date: 2027-01-09
 redirect: https://www.looneescc.com/events/145609
 meta:
