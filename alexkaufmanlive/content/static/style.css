@@ -476,8 +476,8 @@ main h1 {
     border: 1px solid var(--heading-color);
     color: var(--text-color);
     font-family: var(--font-main);
-    /* 16px or larger, or iPhone Safari zooms in when a field is tapped. */
-    font-size: 16px;
+    /* 1rem (16px) or larger, or iPhone Safari zooms in when a field is tapped. */
+    font-size: 1rem;
 }
 
 .join main {
