@@ -114,10 +114,8 @@ document.addEventListener('DOMContentLoaded', function () {
 {% set buttondown_embed_url = "https://buttondown.com/api/emails/embed-subscribe/alexkaufmanlive" %}
 {% macro email_form_fields(prefix) -%}
 <input type="hidden" name="embed" value="1" />
-<label for="{{ prefix }}-email">Enter your email</label>
-<input type="email" name="email" id="{{ prefix }}-email" autocomplete="email" required />
-<label for="{{ prefix }}-zip">Zip code</label>
-<input type="text" name="metadata__zip_code" id="{{ prefix }}-zip" autocomplete="postal-code" required />
+<input type="email" name="email" id="{{ prefix }}-email" placeholder="email" aria-label="email" autocomplete="email" required />
+<input type="text" name="metadata__zip_code" id="{{ prefix }}-zip" placeholder="zip code" aria-label="zip code" autocomplete="postal-code" required />
 {%- endmacro %}
 
 {#- Pop-up signup used on show and contact pages. -#}
@@ -153,11 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
-{%- endmacro %}
-
-{#- Home page button: goes to the /join page instead of a pop-up. -#}
-{% macro email_join_link() -%}
-<a href="{{ url_for('main.join_page') }}"><button type="button" id="email-signup-button">join my email list</button></a>
 {%- endmacro %}
 
 {#- The full signup form shown on the /join page. -#}

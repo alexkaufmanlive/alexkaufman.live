@@ -477,13 +477,17 @@ main h1 {
     font-family: var(--font-main);
 }
 
-.join-form {
-    max-width: 400px;
+.join main {
+    text-align: center;
 }
 
-.join-form label {
-    display: block;
-    margin-bottom: 0.5em;
+.join-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.join-form .modal-buttons {
+    justify-content: center;
 }
 
 .modal-buttons {
