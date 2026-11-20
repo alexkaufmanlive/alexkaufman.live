@@ -23,7 +23,7 @@ from ..content import (
     render_markdown_page,
     upcoming_shows,
 )
-from ..services.email import bonedry_optin, subscribe_to_buttondown
+from ..services.email import bonedry_optin
 from ..services.jsonld import default_schemas, home_schemas
 from ..services.markdown import build_preload_link, og_image_url
 from ..services.pdf import render_pdf
@@ -299,20 +299,18 @@ def blog_redirect():
     return redirect("https://blog.alexkaufman.live", code=302)
 
 
-@bp.route("/api/subscribe", methods=["POST"])
-def email_subscribe():
-    """Handle email subscription via Buttondown API."""
-    email = request.form.get("email")
-    tags = request.form.getlist("tag")
-
-    success, message, status_code = subscribe_to_buttondown(
-        email, tags, api_token=current_app.config.get("BUTTONDOWN_API_TOKEN")
+@bp.route("/join/")
+def join_page():
+    """Standalone signup page: the one link to print on cards."""
+    return render_template(
+        "base.jinja2",
+        content=render_markdown_page("join.md"),
+        page_title="join my email list | alexkaufman.live",
+        og_title="join alex kaufman's email list",
+        og_description="Get emails about new shows and shows near you.",
+        page_class="join",
+        jsonld=default_schemas(),
     )
-
-    if success:
-        return jsonify({"success": True, "message": message}), status_code
-    else:
-        return jsonify({"success": False, "error": message}), status_code
 
 
 @bp.route("/git_update", methods=["POST"])

@@ -95,6 +95,8 @@ leave them alone unless you know what they do:
 - `{{ show_list(upcoming_shows) }}` — renders the shows list from
   the markdown files you added above.
 - `{{ email_list_cta() }}` — the "join the email list" button.
+- `{{ email_join_link() }}` — a "join my email list" button that goes to
+  the /join page (used on the home page). /join is the link to print on cards.
 - `{% include 'icons/foo.svg' %}` — inlines an SVG icon.
 
 Edit the prose around them freely. To change the tagline, edit

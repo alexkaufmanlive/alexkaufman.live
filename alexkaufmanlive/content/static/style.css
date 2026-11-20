@@ -463,7 +463,11 @@ main h1 {
     margin-bottom: 0.5em;
 }
 
-.modal input[type="email"] {
+.modal input[type="email"],
+.modal input[type="text"],
+.join-form input[type="email"],
+.join-form input[type="text"] {
+    box-sizing: border-box;
     width: 100%;
     padding: 0.5em;
     margin-bottom: 1em;
@@ -471,6 +475,15 @@ main h1 {
     border: 1px solid var(--heading-color);
     color: var(--text-color);
     font-family: var(--font-main);
+}
+
+.join-form {
+    max-width: 400px;
+}
+
+.join-form label {
+    display: block;
+    margin-bottom: 0.5em;
 }
 
 .modal-buttons {

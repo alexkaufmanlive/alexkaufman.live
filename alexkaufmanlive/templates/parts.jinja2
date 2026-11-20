@@ -107,15 +107,27 @@ document.addEventListener('DOMContentLoaded', function () {
 {%- endmacro %}
 
 
+{#- Signup fields, shared by the pop-up on show and contact pages and
+    the /join page. The form posts straight to Buttondown's embed endpoint,
+    so Buttondown handles confirmation and spam checks. metadata__zip_code
+    is a custom field set up in Buttondown's subscribe settings. -#}
+{% set buttondown_embed_url = "https://buttondown.com/api/emails/embed-subscribe/alexkaufmanlive" %}
+{% macro email_form_fields(prefix) -%}
+<input type="hidden" name="embed" value="1" />
+<label for="{{ prefix }}-email">Enter your email</label>
+<input type="email" name="email" id="{{ prefix }}-email" autocomplete="email" required />
+<label for="{{ prefix }}-zip">Zip code</label>
+<input type="text" name="metadata__zip_code" id="{{ prefix }}-zip" autocomplete="postal-code" required />
+{%- endmacro %}
+
+{#- Pop-up signup used on show and contact pages. -#}
 {% macro email_list_cta(tags) -%}
 <button type="button" id="email-signup-button">join my email list</button>
-
 <div id="email-modal" class="modal">
   <div class="modal-content">
     <h3>join my email list</h3>
-    <form id="email-form">
-      <label for="modal-email">Enter your email</label>
-      <input type="email" name="email" id="modal-email" required />
+    <form id="email-form" action="{{ buttondown_embed_url }}" method="post">
+      {{ email_form_fields("modal") }}
       <div class="modal-buttons">
         <button type="button" id="email-modal-close">cancel</button>
         <button type="submit" id="email-submit">join</button>
@@ -123,58 +135,39 @@ document.addEventListener('DOMContentLoaded', function () {
     </form>
   </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const button = document.getElementById('email-signup-button');
   const modal = document.getElementById('email-modal');
   const closeButton = document.getElementById('email-modal-close');
-  const form = document.getElementById('email-form');
-
   button.addEventListener('click', function() {
     modal.style.display = 'block';
   });
-
   closeButton.addEventListener('click', function() {
     modal.style.display = 'none';
   });
-
   modal.addEventListener('click', function(e) {
     if (e.target === modal) {
       modal.style.display = 'none';
     }
   });
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(form);
-
-    fetch('{{ url_for("main.email_subscribe") }}', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        document.querySelector('.modal-content').innerHTML = '<h3>Success!</h3><p>' + data.message + '</p><div class="modal-buttons"><button type="button" id="email-modal-close">close</button></div>';
-        document.getElementById('email-modal-close').addEventListener('click', function() {
-          modal.style.display = 'none';
-          location.reload();
-        });
-      } else {
-        document.querySelector('.modal-content').innerHTML = '<h3>Error</h3><p>' + (data.error || 'Error subscribing. Please try again.') + '</p><div class="modal-buttons"><button type="button" id="email-modal-close">try again</button></div>';
-        document.getElementById('email-modal-close').addEventListener('click', function() {
-          location.reload();
-        });
-      }
-    })
-    .catch(error => {
-      document.querySelector('.modal-content').innerHTML = '<h3>Error</h3><p>Error subscribing. Please try again.</p><div class="modal-buttons"><button type="button" id="email-modal-close">try again</button></div>';
-      document.getElementById('email-modal-close').addEventListener('click', function() {
-        location.reload();
-      });
-    });
-  });
 });
 </script>
+{%- endmacro %}
+
+{#- Home page button: goes to the /join page instead of a pop-up. -#}
+{% macro email_join_link() -%}
+<a href="{{ url_for('main.join_page') }}"><button type="button" id="email-signup-button">join my email list</button></a>
+{%- endmacro %}
+
+{#- The full signup form shown on the /join page. -#}
+{% macro email_join_form() -%}
+<div class="join-form">
+  <form id="join-form" action="{{ buttondown_embed_url }}" method="post">
+    {{ email_form_fields("join") }}
+    <div class="modal-buttons">
+      <button type="submit" id="join-submit">join</button>
+    </div>
+  </form>
+</div>
 {%- endmacro %}
