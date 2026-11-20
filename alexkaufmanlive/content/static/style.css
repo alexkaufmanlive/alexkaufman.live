@@ -486,15 +486,6 @@ main h1 {
     margin-bottom: 0.5em;
 }
 
-/* Honeypot: off-screen so people never see it; bots still fill it in. */
-.hp-field {
-    position: absolute;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-}
-
 .modal-buttons {
     display: flex;
     gap: 1em;
