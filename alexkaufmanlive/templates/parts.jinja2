@@ -107,15 +107,80 @@ document.addEventListener('DOMContentLoaded', function () {
 {%- endmacro %}
 
 
+{#- The signup fields, shared by the pop-up on show and contact pages
+    and the /join page. "website" is a honeypot: it is hidden from people,
+    bots fill it in, and the server quietly drops any signup that has it. -#}
+{% macro email_form_fields(prefix) -%}
+<label for="{{ prefix }}-name">Name (optional)</label>
+<input type="text" name="name" id="{{ prefix }}-name" autocomplete="name" maxlength="100" />
+<label for="{{ prefix }}-email">Email</label>
+<input type="email" name="email" id="{{ prefix }}-email" autocomplete="email" maxlength="254" required />
+<label for="{{ prefix }}-zip">Zip code (optional, so I can tell you about shows near you)</label>
+<input type="text" name="zip" id="{{ prefix }}-zip" autocomplete="postal-code" maxlength="10" />
+<div class="hp-field" aria-hidden="true">
+<label for="{{ prefix }}-website">Leave this empty</label>
+<input type="text" name="website" id="{{ prefix }}-website" tabindex="-1" autocomplete="off" />
+</div>
+{%- endmacro %}
+
+{#- Wires a signup form to /api/subscribe. On a result, the contents of
+    the box with id box_id are swapped for the message. When modal_id is
+    given, "close" hides that modal. -#}
+{% macro email_form_script(form_id, box_id, modal_id=None) -%}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('{{ form_id }}');
+  const box = document.getElementById('{{ box_id }}');
+  const modal = document.getElementById('{{ modal_id or "" }}');
+  if (!form || !box) return;
+  function show(title, text, label, onClick) {
+    box.innerHTML = '';
+    const h = document.createElement('h3');
+    h.textContent = title;
+    const p = document.createElement('p');
+    p.textContent = text;
+    const row = document.createElement('div');
+    row.className = 'modal-buttons';
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    row.appendChild(b);
+    box.append(h, p, row);
+  }
+  function retry() { location.reload(); }
+  function done() {
+    {% if modal_id %}modal.style.display = 'none';
+    location.reload();{% else %}window.location.href = '/';{% endif %}
+  }
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    fetch('{{ url_for("main.email_subscribe") }}', {
+      method: 'POST',
+      body: new FormData(form)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        show('Almost there!', data.message, '{{ "close" if modal_id else "done" }}', done);
+      } else {
+        show('Error', data.error || 'Error subscribing. Please try again.', 'try again', retry);
+      }
+    })
+    .catch(() => show('Error', 'Error subscribing. Please try again.', 'try again', retry));
+  });
+});
+</script>
+{%- endmacro %}
+
+{#- Pop-up signup used on show and contact pages. -#}
 {% macro email_list_cta(tags) -%}
 <button type="button" id="email-signup-button">join my email list</button>
-
 <div id="email-modal" class="modal">
-  <div class="modal-content">
+  <div class="modal-content" id="email-modal-content">
     <h3>join my email list</h3>
     <form id="email-form">
-      <label for="modal-email">Enter your email</label>
-      <input type="email" name="email" id="modal-email" required />
+      {{ email_form_fields("modal") }}
       <div class="modal-buttons">
         <button type="button" id="email-modal-close">cancel</button>
         <button type="submit" id="email-submit">join</button>
@@ -123,58 +188,41 @@ document.addEventListener('DOMContentLoaded', function () {
     </form>
   </div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const button = document.getElementById('email-signup-button');
   const modal = document.getElementById('email-modal');
   const closeButton = document.getElementById('email-modal-close');
-  const form = document.getElementById('email-form');
-
   button.addEventListener('click', function() {
     modal.style.display = 'block';
   });
-
   closeButton.addEventListener('click', function() {
     modal.style.display = 'none';
   });
-
   modal.addEventListener('click', function(e) {
     if (e.target === modal) {
       modal.style.display = 'none';
     }
   });
-
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(form);
-
-    fetch('{{ url_for("main.email_subscribe") }}', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        document.querySelector('.modal-content').innerHTML = '<h3>Success!</h3><p>' + data.message + '</p><div class="modal-buttons"><button type="button" id="email-modal-close">close</button></div>';
-        document.getElementById('email-modal-close').addEventListener('click', function() {
-          modal.style.display = 'none';
-          location.reload();
-        });
-      } else {
-        document.querySelector('.modal-content').innerHTML = '<h3>Error</h3><p>' + (data.error || 'Error subscribing. Please try again.') + '</p><div class="modal-buttons"><button type="button" id="email-modal-close">try again</button></div>';
-        document.getElementById('email-modal-close').addEventListener('click', function() {
-          location.reload();
-        });
-      }
-    })
-    .catch(error => {
-      document.querySelector('.modal-content').innerHTML = '<h3>Error</h3><p>Error subscribing. Please try again.</p><div class="modal-buttons"><button type="button" id="email-modal-close">try again</button></div>';
-      document.getElementById('email-modal-close').addEventListener('click', function() {
-        location.reload();
-      });
-    });
-  });
 });
 </script>
+{{ email_form_script("email-form", "email-modal-content", "email-modal") }}
+{%- endmacro %}
+
+{#- Home page button: goes to the /join page instead of a pop-up. -#}
+{% macro email_join_link() -%}
+<a href="{{ url_for('main.join_page') }}"><button type="button" id="email-signup-button">join my email list</button></a>
+{%- endmacro %}
+
+{#- The full signup form shown on the /join page. -#}
+{% macro email_join_form() -%}
+<div class="join-form" id="join-form-box">
+  <form id="join-form">
+    {{ email_form_fields("join") }}
+    <div class="modal-buttons">
+      <button type="submit" id="join-submit">join</button>
+    </div>
+  </form>
+</div>
+{{ email_form_script("join-form", "join-form-box") }}
 {%- endmacro %}

@@ -23,7 +23,11 @@ from ..content import (
     render_markdown_page,
     upcoming_shows,
 )
-from ..services.email import bonedry_optin, subscribe_to_buttondown
+from ..services.email import (
+    SUBSCRIBE_SUCCESS,
+    bonedry_optin,
+    subscribe_to_buttondown,
+)
 from ..services.jsonld import default_schemas, home_schemas
 from ..services.markdown import build_preload_link, og_image_url
 from ..services.pdf import render_pdf
@@ -299,14 +303,58 @@ def blog_redirect():
     return redirect("https://blog.alexkaufman.live", code=302)
 
 
+@bp.route("/join/")
+def join_page():
+    """Standalone signup page: the one link to print on cards."""
+    return render_template(
+        "base.jinja2",
+        content=render_markdown_page("join.md"),
+        page_title="join my email list | alexkaufman.live",
+        og_title="join alex kaufman's email list",
+        og_description="Get emails about new shows and shows near you.",
+        page_class="join",
+        jsonld=default_schemas(),
+    )
+
+
+def _client_ip() -> str | None:
+    """Best guess at the visitor's real IP.
+
+    PythonAnywhere sits behind a proxy, so request.remote_addr is the
+    proxy. X-Real-IP is set by that proxy; X-Forwarded-For's first hop
+    is the fallback.
+    """
+    real_ip = request.headers.get("X-Real-IP", "").strip()
+    if real_ip:
+        return real_ip
+    forwarded = request.headers.get("X-Forwarded-For", "")
+    first_hop = forwarded.split(",")[0].strip()
+    if first_hop:
+        return first_hop
+    return request.remote_addr
+
+
+
 @bp.route("/api/subscribe", methods=["POST"])
 def email_subscribe():
     """Handle email subscription via Buttondown API."""
+    # Honeypot: the "website" field is hidden from people. Anything in it
+    # means a bot, so pretend it worked and never call Buttondown.
+    if request.form.get("website", "").strip():
+        current_app.logger.info("Dropped signup that filled the honeypot")
+        return jsonify({"success": True, "message": SUBSCRIBE_SUCCESS}), 201
+
     email = request.form.get("email")
     tags = request.form.getlist("tag")
 
     success, message, status_code = subscribe_to_buttondown(
-        email, tags, api_token=current_app.config.get("BUTTONDOWN_API_TOKEN")
+        email,
+        tags,
+        api_token=current_app.config.get("BUTTONDOWN_API_TOKEN"),
+        name=request.form.get("name"),
+        zip_code=request.form.get("zip"),
+        ip_address=_client_ip(),
+        referrer_url=request.referrer,
     )
 
     if success:

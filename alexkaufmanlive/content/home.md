@@ -7,7 +7,7 @@
 
 {{ parts.show_list(upcoming_shows) }}
 
-{{ parts.email_list_cta() }}
+{{ parts.email_join_link() }}
 {% endif %}
 
 ## About
